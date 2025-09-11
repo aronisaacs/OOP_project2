@@ -11,6 +11,9 @@ public class Paddle extends GameObject {
     private static final Float MOVEMENT_SPEED = 400.0f;
     private final Vector2 windowDimensions;
     private final UserInputListener inputListener;
+    public static final float PADDLE_WIDTH = 100f;
+    public static final float PADDLE_HEIGHT = 15f;
+    public static final String PADDLE_IMAGE_PATH = "assets/paddle.png";
 
     public Paddle(Vector2 topLeftCorner, Vector2 paddleDimensions,
                   Vector2 windowDimensions, Renderable renderable,

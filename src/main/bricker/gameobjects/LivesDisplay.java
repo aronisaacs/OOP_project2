@@ -1,3 +1,4 @@
+
 package main.bricker.gameobjects;
 
 import danogl.GameObject;
@@ -12,57 +13,59 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
+
 public class LivesDisplay extends GameObject {
     private final List<GameObject> hearts = new ArrayList<>();
     private final GameObject numberDisplay;
     private final TextRenderable textRenderable;
-    private int lives;
-    private final int maxLives;
+    private final Renderable heartImage;
+    private final BrickerGameManager gameManager;
+
     private final Vector2 heartSize = new Vector2(30, 30);
     private final Vector2 heartStartPos = new Vector2(20, 20);
     private final float heartSpacing = 35f;
-    private final BrickerGameManager gameManager;
 
-    public LivesDisplay(int initialLives, int maxLives, ImageReader imageReader, Vector2 windowDimensions, BrickerGameManager gameManager) {
+    public LivesDisplay(int initialLives, ImageReader imageReader, BrickerGameManager gameManager) {
         super(Vector2.ZERO, Vector2.ZERO, null);
-        this.lives = initialLives;
-        this.maxLives = maxLives;
         this.gameManager = gameManager;
 
-        Renderable heartImage = imageReader.readImage("assets/heart.png", true);
+        // Load assets
+        heartImage = imageReader.readImage("assets/heart.png", true);
+        textRenderable = new TextRenderable(String.valueOf(initialLives));
+        textRenderable.setColor(getColorForLives(initialLives));
 
-        for (int i = 0; i < maxLives; i++) {
+        numberDisplay = new GameObject(
+                new Vector2(heartStartPos.x(), heartStartPos.y() + 40),
+                new Vector2(50, 30),
+                textRenderable
+        );
+        gameManager.addGameObject(numberDisplay, Layer.UI);
+
+        // Create hearts (all added once)
+        for (int i = 0; i < initialLives; i++) {
             Vector2 pos = heartStartPos.add(new Vector2(i * heartSpacing, 0));
             GameObject heart = new GameObject(pos, heartSize, heartImage);
             hearts.add(heart);
+            gameManager.addGameObject(heart, Layer.UI);
         }
-
-        textRenderable = new TextRenderable(String.valueOf(lives));
-
-        textRenderable.setColor(getColorForLives(lives));
-        numberDisplay = new GameObject(new Vector2(heartStartPos.x(), heartStartPos.y() + 40), new Vector2(50, 30), textRenderable);
     }
 
-    public void addToGameObjects() {
-        for (int i = 0; i < lives; i++) {
-            gameManager.addGameObject(hearts.get(i), Layer.UI);
-        }
-        gameManager.addGameObject(numberDisplay, Layer.UI);
-    }
-
+    /**
+     * Update display: toggle heart visibility and update text.
+     */
     public void updateLives(int newLives) {
-        if (newLives < lives) {
-            for (int i = newLives; i < lives; i++) {
-                gameManager.removeGameObject(hearts.get(i), Layer.UI);
-            }
-        } else if (newLives > lives) {
-            for (int i = lives; i < newLives && i < maxLives; i++) {
-                gameManager.addGameObject(hearts.get(i), Layer.UI);
+        for (int i = 0; i < hearts.size(); i++) {
+            if (i < newLives) {
+                hearts.get(i).renderer().setRenderable(heartImage); // show
+            } else {
+                hearts.get(i).renderer().setRenderable(null);       // hide
             }
         }
-        lives = newLives;
-        textRenderable.setString(String.valueOf(lives));
-        textRenderable.setColor(getColorForLives(lives));
+
+        textRenderable.setString(String.valueOf(newLives));
+        textRenderable.setColor(getColorForLives(newLives));
     }
 
     private Color getColorForLives(int lives) {

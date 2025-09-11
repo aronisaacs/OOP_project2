@@ -10,7 +10,9 @@ import main.bricker.strategies.CollisionStrategy;
 
 public class Brick extends GameObject {
     private CollisionStrategy collisionStrategy;
-    private BrickerGameManager brickerGameManager;
+    private final BrickerGameManager brickerGameManager;
+    public static final float BRICK_HEIGHT = 15f;
+    public static final String BRICK_IMAGE_PATH = "assets/brick.png";
 
     public Brick(Vector2 topLeftCorner, Vector2 dimensions,
                  Renderable renderable, CollisionStrategy collisionStrategy,
