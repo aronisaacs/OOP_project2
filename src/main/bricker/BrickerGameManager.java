@@ -12,14 +12,11 @@ import danogl.util.Vector2;
 import main.bricker.gameobjects.*;
 import main.bricker.strategies.BasicCollisionStrategy;
 import main.bricker.strategies.CollisionStrategy;
-
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
-
 public class BrickerGameManager extends GameManager {
-
 
     private static final float BORDER_THICKNESS = 5f;
     private static final float PADDLE_OFFSET_FROM_BOTTOM = 100f;
@@ -34,7 +31,6 @@ public class BrickerGameManager extends GameManager {
     private UserInputListener inputListener;
     private GameState gameState;
     private LivesDisplay livesDisplay;
-    private Counter brickCounter;
     private ImageReader imageReader;
     private SoundReader soundReader;
 
@@ -73,31 +69,20 @@ public class BrickerGameManager extends GameManager {
         makeBall(imageReader, soundReader);
         makePaddle(imageReader, windowDimensions, inputListener);
         CollisionStrategy collisionStrategy = new BasicCollisionStrategy(this);
-        brickCounter = new Counter(0);
         makeBricks(imageReader, collisionStrategy);
         gameState = new GameState(INITIAL_LIVES, numBricksPerRow * numRows);
-        makeLivesDisplay(imageReader);
-    }
-
-    private void makeLivesDisplay(ImageReader imageReader) {
-        // Instantiate and add LivesDisplay
-        livesDisplay = new LivesDisplay(INITIAL_LIVES, imageReader, this
-        );
+        livesDisplay = new LivesDisplay(INITIAL_LIVES, imageReader, this);
     }
 
     private void makeBricks(ImageReader imageReader,
                             CollisionStrategy collisionStrategy) {
-
         float totalGap = 2 * BORDER_THICKNESS + (numBricksPerRow - 1) * BRICK_GAP;
         float brickWidth = (windowDimensions.x() - totalGap) / numBricksPerRow;
-
         Renderable brickImage = imageReader.readImage(Brick.BRICK_IMAGE_PATH, false);
-
         for (int row = 0; row < numRows; row++) {
             float y = BORDER_THICKNESS + row * (Brick.BRICK_HEIGHT + BRICK_GAP);
             for (int col = 0; col < numBricksPerRow; col++) {
                 makeBrick(collisionStrategy, col, brickWidth,  y,  brickImage);
-                makeBrick(collisionStrategy,  col, brickWidth,  y,  brickImage);
             }
         }
     }
@@ -112,7 +97,6 @@ public class BrickerGameManager extends GameManager {
                 this
         );
         gameObjects().addGameObject(brick, Layer.STATIC_OBJECTS);
-        brickCounter.increment();
     }
 
     private void makeBorders() {
@@ -171,7 +155,7 @@ public class BrickerGameManager extends GameManager {
     }
 
     public Counter getBrickCounter() {
-        return brickCounter;
+        return gameState.getBrickCounter();
     }
 
     @Override
@@ -180,12 +164,7 @@ public class BrickerGameManager extends GameManager {
 
         // Check victory
         if (gameState.isVictory() || inputListener.isKeyPressed(KeyEvent.VK_W)) {
-            boolean playAgain = windowController.openYesNoDialog("You win! Play again?");
-            if (playAgain) {
-                windowController.resetGame();
-            } else {
-                windowController.closeWindow();
-            }
+            showEndGameWindow("You win! Play again?");
             return;
         }
 
@@ -197,48 +176,17 @@ public class BrickerGameManager extends GameManager {
             if (!gameState.isGameOver()) {
                 resetBall();
             } else {
-                boolean playAgain = windowController.openYesNoDialog("You lose! Play again?");
-                if (playAgain) {
-                    windowController.resetGame();
-                } else {
-                    windowController.closeWindow();
-                }
+                showEndGameWindow("You lose! Play again?");
             }
         }
     }
 
-
-
-    // Override update to check for losing condition
-//    @Override
-//    public void update(float deltaTime) {
-//        super.update(deltaTime);
-//        // Win by removing all bricks
-//        if (brickCounter.value() == 0 || inputListener.isKeyPressed(KeyEvent.VK_W)) {
-//            boolean playAgain = windowController.openYesNoDialog("You win! Play again?");
-//            if (playAgain) {
-//                windowController.resetGame();
-//            } else {
-//                windowController.closeWindow();
-//            }
-//            return;
-//        }
-//
-//        if (ball.getCenter().y() > windowDimensions.y()) {
-//            lives--;
-//            livesDisplay.updateLives(lives); // Update display
-//            if (lives > 0) {
-//                resetBall();
-//            } else {
-//                boolean playAgain = windowController.openYesNoDialog("You lose! Play again?");
-//                if (playAgain) {
-//                    windowController.resetGame();
-//                } else {
-//                    windowController.closeWindow();
-//                }
-//            }
-//        }
-//    }
-
-
+    private void showEndGameWindow(String msg) {
+        boolean playAgain = windowController.openYesNoDialog(msg);
+        if (playAgain) {
+            windowController.resetGame();
+        } else {
+            windowController.closeWindow();
+        }
+    }
 }

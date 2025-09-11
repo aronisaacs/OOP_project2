@@ -21,7 +21,6 @@ public class LivesDisplay extends GameObject {
     private final GameObject numberDisplay;
     private final TextRenderable textRenderable;
     private final Renderable heartImage;
-    private final BrickerGameManager gameManager;
 
     private final Vector2 heartSize = new Vector2(30, 30);
     private final Vector2 heartStartPos = new Vector2(20, 20);
@@ -29,7 +28,6 @@ public class LivesDisplay extends GameObject {
 
     public LivesDisplay(int initialLives, ImageReader imageReader, BrickerGameManager gameManager) {
         super(Vector2.ZERO, Vector2.ZERO, null);
-        this.gameManager = gameManager;
 
         // Load assets
         heartImage = imageReader.readImage("assets/heart.png", true);
