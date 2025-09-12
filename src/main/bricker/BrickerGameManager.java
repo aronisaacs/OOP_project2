@@ -15,6 +15,26 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
+/**
+ * The main class of the Bricker game, responsible for initializing and managing the game state.
+ * It sets up the game window, creates game objects, and handles game updates.
+ * The game features a paddle, ball, bricks, and borders, with collision detection and game state management.
+ * Players can win by destroying all bricks or lose by running out of lives.
+ * The game can be restarted or exited based on player input.
+ * @see danogl.GameManager
+ * @see danogl.gui.WindowController
+ * @see danogl.gui.UserInputListener
+ * @see danogl.gui.SoundReader
+ * @see danogl.gui.ImageReader
+ * @see danogl.util.Vector2
+ * @see main.bricker.gameobjects.Ball
+ * @see main.bricker.gameobjects.Paddle
+ * @see main.bricker.gameobjects.Brick
+ * @see main.bricker.gameobjects.LivesDisplay
+ * @see main.bricker.strategies.CollisionStrategy
+ * @see main.bricker.strategies.BasicCollisionStrategy
+ * @author Aron Isaacs
+ */
 public class BrickerGameManager extends GameManager {
 
     private static final float BORDER_THICKNESS = 5f;
@@ -39,14 +59,25 @@ public class BrickerGameManager extends GameManager {
     private GameState gameState;
     private LivesDisplay livesDisplay;
 
-
+    /**
+     * Constructor for BrickerGameManager.
+     * @param WINDOW_TITLE the title of the game window
+     * @param windowDimensions the dimensions of the game window
+     * @param numBricksPerRow the number of bricks per row
+     * @param numRows the number of rows of bricks
+     */
     public BrickerGameManager(String WINDOW_TITLE, Vector2 windowDimensions, int numBricksPerRow, int numRows) {
         super(WINDOW_TITLE, windowDimensions);
         this.windowDimensions = windowDimensions;
         this.numBricksPerRow = numBricksPerRow;
         this.numRows = numRows;
     }
-
+    /**
+     * The main method to start the Bricker game.
+     * Accepts optional command-line arguments for the number of bricks per row and the number of rows.
+     * If no arguments are provided, default values are used.
+     * @param args command-line arguments: [numBricksPerRow, numRows]
+     */
     public static void main(String[] args) {
         int numBricksPerRow = DEFAULT_NUM_BRICKS_PER_ROW;
         int numRows = DEFAULT_NUM_ROWS;
@@ -57,6 +88,14 @@ public class BrickerGameManager extends GameManager {
         new BrickerGameManager(WINDOW_TITLE, WINDOW_DIMENSIONS, numBricksPerRow, numRows).run();
     }
 
+    /**
+     * Initializes the game by setting up the game window, creating game objects,
+     * and preparing the game state.
+     * @param imageReader    used to read images for rendering game objects
+     * @param soundReader    used to read sounds for game events
+     * @param inputListener  listens for user input (keyboard/mouse)
+     * @param windowController controls the game window (open, close, reset)
+     */
     @Override
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
                                UserInputListener inputListener, WindowController windowController) {
@@ -68,6 +107,10 @@ public class BrickerGameManager extends GameManager {
         makeGameObjects();
     }
 
+    /*
+     * Creates and initializes all game objects including the background, borders, paddle, ball, bricks,
+     * and the game state. Sets up collision strategies and the lives display.
+     */
     private void makeGameObjects() {
         makeBackground();
         makeBorders();
@@ -79,10 +122,17 @@ public class BrickerGameManager extends GameManager {
         livesDisplay = new LivesDisplay(INITIAL_LIVES, imageReader, this);
     }
 
+    /*
+     * Creates the brick layout based on the specified number of rows and bricks per row.
+     * Each brick is assigned a collision strategy to handle interactions with the ball.
+     * @param collisionStrategy the strategy to apply when a brick collides with another object
+     */
     private void makeBricks(CollisionStrategy collisionStrategy) {
+        // Calculate brick width based on available space and gaps
         float totalGap = 2 * BORDER_THICKNESS + (numBricksPerRow - 1) * BRICK_GAP;
         float brickWidth = (windowDimensions.x() - totalGap) / numBricksPerRow;
         Renderable brickImage = imageReader.readImage(Brick.BRICK_IMAGE_PATH, false);
+        // Create bricks in a grid layout
         for (int row = 0; row < numRows; row++) {
             float y = BORDER_THICKNESS + row * (Brick.BRICK_HEIGHT + BRICK_GAP);
             for (int col = 0; col < numBricksPerRow; col++) {
@@ -91,7 +141,16 @@ public class BrickerGameManager extends GameManager {
         }
     }
 
+    /*
+     * Creates a single brick at the specified column and row position with the given dimensions and image.
+     * @param collisionStrategy the strategy to apply when this brick collides with another object
+     * @param col the column index for the brick's position
+     * @param brickWidth the width of the brick
+     * @param y the y-coordinate for the brick's position
+     * @param brickImage the image to use for rendering the brick
+     */
     private void makeBrick(CollisionStrategy collisionStrategy,  int col, float brickWidth, float y, Renderable brickImage) {
+        // Calculate x position based on column index
         float x = BORDER_THICKNESS + col * (brickWidth + BRICK_GAP);
         GameObject brick = new Brick(
             new Vector2(x, y),
@@ -102,7 +161,10 @@ public class BrickerGameManager extends GameManager {
         );
         gameObjects().addGameObject(brick, Layer.STATIC_OBJECTS);
     }
-
+    /*
+     * Creates the borders around the game window to contain the ball and paddle within the playable area.
+     * Borders are created on the left, right, and top sides of the window.
+     */
     private void makeBorders() {
         Renderable wallImage = new RectangleRenderable(Color.CYAN);
         GameObject leftBorder = new GameObject(Vector2.ZERO, new Vector2(BORDER_THICKNESS, windowDimensions.y()), wallImage);
@@ -115,6 +177,10 @@ public class BrickerGameManager extends GameManager {
         gameObjects().addGameObject(topBorder);
     }
 
+    /*
+     * Creates the paddle object, positions it near the bottom of the window, and sets its dimensions and image.
+     * The paddle is controlled by user input to move left and right.
+     */
     private void makePaddle() {
         Renderable paddleImage = imageReader.readImage(Paddle.PADDLE_IMAGE_PATH, true);
         Vector2 initialPosition = new Vector2(windowDimensions.x() / 2,
@@ -126,6 +192,10 @@ public class BrickerGameManager extends GameManager {
         gameObjects().addGameObject(paddle);
     }
 
+    /*
+     * Creates the ball object, sets its initial position and velocity, and adds it to the game.
+     * The ball will bounce off walls, the paddle, and bricks, and its behavior is managed by collision detection.
+     */
     private void makeBall() {
         Renderable ballImage = imageReader.readImage(Ball.BALL_IMAGE_PATH, true);
         Sound collisionSound = soundReader.readSound(Ball.BALL_SOUND_PATH);
@@ -134,7 +204,10 @@ public class BrickerGameManager extends GameManager {
         resetBall();
         gameObjects().addGameObject(ball);
     }
-
+    /*
+     * Resets the ball's position to the center of the window and assigns it a random initial velocity.
+     * The ball will start moving in a random direction when reset.
+     */
     private void resetBall() {
         ball.setCenter(windowDimensions.mult(0.5f));
         Random random = new Random();
@@ -142,7 +215,10 @@ public class BrickerGameManager extends GameManager {
         float ballSpeedY = Ball.BALL_SPEED * (random.nextBoolean() ? 1 : -1);
         ball.setVelocity(new Vector2(ballSpeedX, ballSpeedY));
     }
-
+    /*
+     * Creates and sets the background image for the game window.
+     * The background image is scaled to fit the entire window dimensions.
+     */
     private void makeBackground() {
         Renderable backgroundImage = imageReader.readImage(BACKGROUND_IMAGE_PATH, false);
         GameObject background = new GameObject(Vector2.ZERO, windowController.getWindowDimensions(), backgroundImage);
@@ -150,18 +226,39 @@ public class BrickerGameManager extends GameManager {
         gameObjects().addGameObject(background, Layer.BACKGROUND);
     }
 
+    /**
+     * Adds a game object to the specified layer in the game.
+     * @param object the game object to add
+     * @param layer the layer to which the object should be added
+     */
     public void addGameObject(GameObject object, int layer) {
         gameObjects().addGameObject(object, layer);
     }
 
+    /**
+     * Removes a game object from the specified layer in the game.
+     * @param object the game object to remove
+     * @param layer the layer from which the object should be removed
+     */
     public void removeGameObject(GameObject object, int layer) {
         gameObjects().removeGameObject(object, layer);
     }
 
+    /**
+     * Decrements the brick counter in the game state.
+     * Called when a brick is destroyed to update the remaining brick count.
+     */
     public void decrementBrickCounter() {
         gameState.decrementBricksCounter();
     }
 
+    /**
+     * Updates the game state each frame, checking for victory or loss conditions.
+     * If the ball falls below the screen, the player loses a life and the ball is reset.
+     * If all bricks are destroyed, the player wins.
+     * The game can be restarted or exited based on player input.
+     * @param deltaTime the time elapsed since the last update
+     */
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
@@ -176,7 +273,7 @@ public class BrickerGameManager extends GameManager {
         if (ball.getCenter().y() > windowDimensions.y()) {
             gameState.decrementLivesCounter();
             livesDisplay.updateLives(gameState.getLivesCounter()); // Update display
-
+            // Check for game over
             if (!gameState.isGameOver()) {
                 resetBall();
             } else {
@@ -185,6 +282,11 @@ public class BrickerGameManager extends GameManager {
         }
     }
 
+    /*
+     * Displays an end-game dialog with the specified message, asking the player if they want to play again.
+     * If the player chooses to play again, the game is reset; otherwise, the game window is closed.
+     * @param msg the message to display in the dialog
+     */
     private void showEndGameWindow(String msg) {
         boolean playAgain = windowController.openYesNoDialog(msg);
         if (playAgain) {

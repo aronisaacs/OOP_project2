@@ -15,18 +15,30 @@ import java.util.List;
 
 
 
-
+/**
+ * Displays the player's remaining lives using heart icons and a numeric display.
+ * Hearts are shown or hidden based on the current number of lives.
+ * The numeric display changes color based on the number of lives:
+ * green for 3 or more, yellow for 2, and red for 1 or fewer.
+ * @see danogl.GameObject
+ * @author Aron Isaacs
+ */
 public class LivesDisplay extends GameObject {
-    private final List<GameObject> hearts = new ArrayList<>();
-    private final TextRenderable textRenderable;
     private final static String HEART_IMAGE = "assets/heart.png";
-    private final Renderable heartImage;
-
     private static final Vector2 HEART_SIZE = new Vector2(30, 30);
     private static final Vector2 HEART_START_POS = new Vector2(20, 20);
     private static final float HEART_SPACING = 35f;
     private static final Vector2 NUMBER_DISPLAY_SIZE = new Vector2(50, 30);
+    private final Renderable heartImage;
+    private final TextRenderable textRenderable;
+    private final List<GameObject> hearts = new ArrayList<>();
 
+    /**
+     * Constructs a LivesDisplay with the specified initial lives, image reader, and game manager.
+     * @param initialLives the initial number of lives to display.
+     * @param imageReader the ImageReader to load the heart image.
+     * @param gameManager the BrickerGameManager to add game objects to.
+     */
     public LivesDisplay(int initialLives, ImageReader imageReader, BrickerGameManager gameManager) {
         super(Vector2.ZERO, Vector2.ZERO, null);
 
@@ -66,6 +78,9 @@ public class LivesDisplay extends GameObject {
         textRenderable.setColor(getColorForLives(newLives));
     }
 
+    /*
+        * Determines the color for the numeric display based on the number of lives.
+     */
     private Color getColorForLives(int lives) {
         if (lives >= 3) return Color.GREEN;
         if (lives == 2) return Color.YELLOW;
