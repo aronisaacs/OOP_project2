@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
  * @author Aron Isaacs
  */
 public class Paddle extends GameObject {
+    public static final float PADDLE_OFFSET_FROM_BOTTOM = 100f;
     private static final Float MOVEMENT_SPEED = 400.0f;
     private final Vector2 windowDimensions;
     private final UserInputListener inputListener;

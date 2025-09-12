@@ -38,12 +38,8 @@ import java.util.Random;
 public class BrickerGameManager extends GameManager {
 
     private static final float BORDER_THICKNESS = 5f;
-    private static final float PADDLE_OFFSET_FROM_BOTTOM = 100f;
-    private static final float BRICK_GAP = 3f; // Gap between bricks
+
     private static final String BACKGROUND_IMAGE_PATH = "assets/DARK_BG2_small.jpeg";
-    private static final int DEFAULT_NUM_BRICKS_PER_ROW = 8;
-    private static final int DEFAULT_NUM_ROWS = 7;
-    private static final int INITIAL_LIVES = 3;
     private static final Vector2 WINDOW_DIMENSIONS = new Vector2(800, 600);
     private static final String WINDOW_TITLE = "Bricker";
     private static final String WIN_MESSAGE = "You win! Play again?";
@@ -79,8 +75,8 @@ public class BrickerGameManager extends GameManager {
      * @param args command-line arguments: [numBricksPerRow, numRows]
      */
     public static void main(String[] args) {
-        int numBricksPerRow = DEFAULT_NUM_BRICKS_PER_ROW;
-        int numRows = DEFAULT_NUM_ROWS;
+        int numBricksPerRow = Brick.DEFAULT_NUM_BRICKS_PER_ROW;
+        int numRows = Brick.DEFAULT_NUM_ROWS;
         if (args.length == 2) {
             numBricksPerRow = Integer.parseInt(args[0]);
             numRows = Integer.parseInt(args[1]);
@@ -118,8 +114,8 @@ public class BrickerGameManager extends GameManager {
         makePaddle();
         CollisionStrategy collisionStrategy = new BasicCollisionStrategy(this);
         makeBricks(collisionStrategy);
-        gameState = new GameState(INITIAL_LIVES, numBricksPerRow * numRows);
-        livesDisplay = new LivesDisplay(INITIAL_LIVES, imageReader, this);
+        gameState = new GameState(GameState.INITIAL_LIVES, numBricksPerRow * numRows);
+        livesDisplay = new LivesDisplay(GameState.INITIAL_LIVES, imageReader, this);
     }
 
     /*
@@ -129,12 +125,12 @@ public class BrickerGameManager extends GameManager {
      */
     private void makeBricks(CollisionStrategy collisionStrategy) {
         // Calculate brick width based on available space and gaps
-        float totalGap = 2 * BORDER_THICKNESS + (numBricksPerRow - 1) * BRICK_GAP;
+        float totalGap = 2 * BORDER_THICKNESS + (numBricksPerRow - 1) * Brick.BRICK_GAP;
         float brickWidth = (windowDimensions.x() - totalGap) / numBricksPerRow;
         Renderable brickImage = imageReader.readImage(Brick.BRICK_IMAGE_PATH, false);
         // Create bricks in a grid layout
         for (int row = 0; row < numRows; row++) {
-            float y = BORDER_THICKNESS + row * (Brick.BRICK_HEIGHT + BRICK_GAP);
+            float y = BORDER_THICKNESS + row * (Brick.BRICK_HEIGHT + Brick.BRICK_GAP);
             for (int col = 0; col < numBricksPerRow; col++) {
                 makeBrick(collisionStrategy, col, brickWidth,  y,  brickImage);
             }
@@ -151,7 +147,7 @@ public class BrickerGameManager extends GameManager {
      */
     private void makeBrick(CollisionStrategy collisionStrategy,  int col, float brickWidth, float y, Renderable brickImage) {
         // Calculate x position based on column index
-        float x = BORDER_THICKNESS + col * (brickWidth + BRICK_GAP);
+        float x = BORDER_THICKNESS + col * (brickWidth + Brick.BRICK_GAP);
         GameObject brick = new Brick(
             new Vector2(x, y),
             new Vector2(brickWidth, Brick.BRICK_HEIGHT),
@@ -184,7 +180,7 @@ public class BrickerGameManager extends GameManager {
     private void makePaddle() {
         Renderable paddleImage = imageReader.readImage(Paddle.PADDLE_IMAGE_PATH, true);
         Vector2 initialPosition = new Vector2(windowDimensions.x() / 2,
-                windowDimensions.y() - PADDLE_OFFSET_FROM_BOTTOM);
+                windowDimensions.y() - Paddle.PADDLE_OFFSET_FROM_BOTTOM);
         GameObject paddle = new Paddle(initialPosition, new Vector2(Paddle.PADDLE_WIDTH,
                 Paddle.PADDLE_HEIGHT),
                 windowDimensions , paddleImage

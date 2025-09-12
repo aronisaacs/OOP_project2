@@ -79,7 +79,7 @@ public class LivesDisplay extends GameObject {
     }
 
     /*
-        * Determines the color for the numeric display based on the number of lives.
+     * Determines the color for the numeric display based on the number of lives.
      */
     private Color getColorForLives(int lives) {
         if (lives >= 3) return Color.GREEN;

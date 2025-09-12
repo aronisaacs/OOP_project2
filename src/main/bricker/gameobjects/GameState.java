@@ -12,7 +12,7 @@ import danogl.util.Counter;
 public class GameState {
     private final Counter lives;
     private final Counter bricks;
-
+    public static final int INITIAL_LIVES = 3;
     /**
      * Constructs a GameState with specified initial lives and total bricks.
      * @param initialLives the initial number of lives.

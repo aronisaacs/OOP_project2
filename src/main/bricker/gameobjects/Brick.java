@@ -17,6 +17,9 @@ import main.bricker.strategies.CollisionStrategy;
  * @author Aron Isaacs
  */
 public class Brick extends GameObject {
+    public static final float BRICK_GAP = 3f; // Gap between bricks
+    public static final int DEFAULT_NUM_BRICKS_PER_ROW = 8;
+    public static final int DEFAULT_NUM_ROWS = 7;
     private CollisionStrategy collisionStrategy;
     private final BrickerGameManager brickerGameManager;
     public static final float BRICK_HEIGHT = 15f;
