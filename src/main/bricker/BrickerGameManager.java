@@ -7,7 +7,6 @@ import danogl.components.CoordinateSpace;
 import danogl.gui.*;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
-import danogl.util.Counter;
 import danogl.util.Vector2;
 import main.bricker.gameobjects.*;
 import main.bricker.strategies.BasicCollisionStrategy;
@@ -22,34 +21,40 @@ public class BrickerGameManager extends GameManager {
     private static final float PADDLE_OFFSET_FROM_BOTTOM = 100f;
     private static final float BRICK_GAP = 3f; // Gap between bricks
     private static final String BACKGROUND_IMAGE_PATH = "assets/DARK_BG2_small.jpeg";
+    private static final int DEFAULT_NUM_BRICKS_PER_ROW = 8;
+    private static final int DEFAULT_NUM_ROWS = 7;
+    private static final int INITIAL_LIVES = 3;
+    private static final Vector2 WINDOW_DIMENSIONS = new Vector2(800, 600);
+    private static final String WINDOW_TITLE = "Bricker";
+    private static final String WIN_MESSAGE = "You win! Play again?";
+    private static final String LOSE_MESSAGE = "You lose! Play again?";
     private final Vector2 windowDimensions;
     private final int numBricksPerRow;
     private final int numRows;
-    private Ball ball;
-    private static final int INITIAL_LIVES = 3;
-    private WindowController windowController;
     private UserInputListener inputListener;
+    private SoundReader soundReader;
+    private ImageReader imageReader;
+    private WindowController windowController;
+    private Ball ball;
     private GameState gameState;
     private LivesDisplay livesDisplay;
-    private ImageReader imageReader;
-    private SoundReader soundReader;
 
 
-    public BrickerGameManager(String windowTitle, Vector2 windowDimensions, int numBricksPerRow, int numRows) {
-        super(windowTitle, windowDimensions);
+    public BrickerGameManager(String WINDOW_TITLE, Vector2 windowDimensions, int numBricksPerRow, int numRows) {
+        super(WINDOW_TITLE, windowDimensions);
         this.windowDimensions = windowDimensions;
         this.numBricksPerRow = numBricksPerRow;
         this.numRows = numRows;
     }
 
     public static void main(String[] args) {
-        int numBricksPerRow = 8;
-        int numRows = 7;
+        int numBricksPerRow = DEFAULT_NUM_BRICKS_PER_ROW;
+        int numRows = DEFAULT_NUM_ROWS;
         if (args.length == 2) {
             numBricksPerRow = Integer.parseInt(args[0]);
             numRows = Integer.parseInt(args[1]);
         }
-        new BrickerGameManager("Bricker", new Vector2(800, 600), numBricksPerRow, numRows).run();
+        new BrickerGameManager(WINDOW_TITLE, WINDOW_DIMENSIONS, numBricksPerRow, numRows).run();
     }
 
     @Override
@@ -64,18 +69,17 @@ public class BrickerGameManager extends GameManager {
     }
 
     private void makeGameObjects() {
-        makeBackground(imageReader, windowController);
+        makeBackground();
         makeBorders();
-        makeBall(imageReader, soundReader);
-        makePaddle(imageReader, windowDimensions, inputListener);
+        makeBall();
+        makePaddle();
         CollisionStrategy collisionStrategy = new BasicCollisionStrategy(this);
-        makeBricks(imageReader, collisionStrategy);
+        makeBricks(collisionStrategy);
         gameState = new GameState(INITIAL_LIVES, numBricksPerRow * numRows);
         livesDisplay = new LivesDisplay(INITIAL_LIVES, imageReader, this);
     }
 
-    private void makeBricks(ImageReader imageReader,
-                            CollisionStrategy collisionStrategy) {
+    private void makeBricks(CollisionStrategy collisionStrategy) {
         float totalGap = 2 * BORDER_THICKNESS + (numBricksPerRow - 1) * BRICK_GAP;
         float brickWidth = (windowDimensions.x() - totalGap) / numBricksPerRow;
         Renderable brickImage = imageReader.readImage(Brick.BRICK_IMAGE_PATH, false);
@@ -111,7 +115,7 @@ public class BrickerGameManager extends GameManager {
         gameObjects().addGameObject(topBorder);
     }
 
-    private void makePaddle(ImageReader imageReader, Vector2 windowDimensions, UserInputListener inputListener) {
+    private void makePaddle() {
         Renderable paddleImage = imageReader.readImage(Paddle.PADDLE_IMAGE_PATH, true);
         Vector2 initialPosition = new Vector2(windowDimensions.x() / 2,
                 windowDimensions.y() - PADDLE_OFFSET_FROM_BOTTOM);
@@ -122,7 +126,7 @@ public class BrickerGameManager extends GameManager {
         gameObjects().addGameObject(paddle);
     }
 
-    private void makeBall(ImageReader imageReader, SoundReader soundReader) {
+    private void makeBall() {
         Renderable ballImage = imageReader.readImage(Ball.BALL_IMAGE_PATH, true);
         Sound collisionSound = soundReader.readSound(Ball.BALL_SOUND_PATH);
         ball = new Ball(Vector2.ZERO, new Vector2(Ball.BALL_SIZE, Ball.BALL_SIZE), ballImage,
@@ -139,7 +143,7 @@ public class BrickerGameManager extends GameManager {
         ball.setVelocity(new Vector2(ballSpeedX, ballSpeedY));
     }
 
-    private void makeBackground(ImageReader imageReader, WindowController windowController) {
+    private void makeBackground() {
         Renderable backgroundImage = imageReader.readImage(BACKGROUND_IMAGE_PATH, false);
         GameObject background = new GameObject(Vector2.ZERO, windowController.getWindowDimensions(), backgroundImage);
         background.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
@@ -154,8 +158,8 @@ public class BrickerGameManager extends GameManager {
         gameObjects().removeGameObject(object, layer);
     }
 
-    public Counter getBrickCounter() {
-        return gameState.getBrickCounter();
+    public void decrementBrickCounter() {
+        gameState.decrementBricksCounter();
     }
 
     @Override
@@ -164,19 +168,19 @@ public class BrickerGameManager extends GameManager {
 
         // Check victory
         if (gameState.isVictory() || inputListener.isKeyPressed(KeyEvent.VK_W)) {
-            showEndGameWindow("You win! Play again?");
+            showEndGameWindow(WIN_MESSAGE);
             return;
         }
 
         // Check ball falling below screen
         if (ball.getCenter().y() > windowDimensions.y()) {
-            gameState.getLives().decrement();
-            livesDisplay.updateLives(gameState.getLives().value()); // Update display
+            gameState.decrementLivesCounter();
+            livesDisplay.updateLives(gameState.getLivesCounter()); // Update display
 
             if (!gameState.isGameOver()) {
                 resetBall();
             } else {
-                showEndGameWindow("You lose! Play again?");
+                showEndGameWindow(LOSE_MESSAGE);
             }
         }
     }

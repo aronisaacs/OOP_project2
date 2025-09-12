@@ -27,7 +27,7 @@ public class Brick extends GameObject {
     public void onCollisionEnter(GameObject other, Collision collision) {
         super.onCollisionEnter(other, collision);
         collisionStrategy.onCollision(this, other);
-        brickerGameManager.getBrickCounter().decrement();
+        brickerGameManager.decrementBrickCounter();
 
     }
 }
