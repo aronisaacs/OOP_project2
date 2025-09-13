@@ -3,7 +3,9 @@ the code is correct, just my computer is being weird.
 remember to enable it later!!
 
 2: a lot of thought went into deciding which objects should receive the reference to the brickergamemanager.
-in the end, only the collision strategy classes receive it, since they are the ones that need to trigger game state changes.
+in the end, only the collision strategy classes receive it, since they are the ones that need to trigger game
+ state changes. it might be better to change this later, but it depends on how the game evolves.
+
 the livesDisplay recieves only the add object reference to add its inner functions, which it uses only in its
 constructor (it does not save this function as a field).
 

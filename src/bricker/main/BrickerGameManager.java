@@ -111,8 +111,7 @@ public class BrickerGameManager extends GameManager {
         makeBorders();
         makeBall();
         makePaddle();
-        CollisionStrategy collisionStrategy = new BasicCollisionStrategy(this);
-        makeBricks(collisionStrategy);
+        makeBricks();
         gameState = new GameState(GameState.INITIAL_LIVES, numBricksPerRow * numRows);
         livesDisplay = new LivesDisplay(imageReader, this::addGameObject);
     }
@@ -122,11 +121,14 @@ public class BrickerGameManager extends GameManager {
      * Each brick is assigned a collision strategy to handle interactions with the ball.
      * @param collisionStrategy the strategy to apply when a brick collides with another object
      */
-    private void makeBricks(CollisionStrategy collisionStrategy) {
+    private void makeBricks() {
         // Calculate brick width based on available space and gaps
         float totalGap = 2 * BORDER_THICKNESS + (numBricksPerRow - 1) * Brick.BRICK_GAP;
         float brickWidth = (windowDimensions.x() - totalGap) / numBricksPerRow;
         Renderable brickImage = imageReader.readImage(Brick.BRICK_IMAGE_PATH, false);
+        // Use a basic collision strategy for bricks. main part to be changed for the final part of the
+        // assignment!!
+        CollisionStrategy collisionStrategy = new BasicCollisionStrategy(this);
         // Create bricks in a grid layout
         for (int row = 0; row < numRows; row++) {
             float y = BORDER_THICKNESS + row * (Brick.BRICK_HEIGHT + Brick.BRICK_GAP);
