@@ -1,18 +1,18 @@
-package main.bricker.gameobjects;
+package bricker.gameobjects;
 
 
 import danogl.GameObject;
 import danogl.collisions.Collision;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-import main.bricker.strategies.CollisionStrategy;
+import bricker.strategies.CollisionStrategy;
 
 /**
  * A brick in the Bricker game. When hit by a ball, it uses its collision strategy to determine what happens.
  * It also notifies the game manager to decrement the brick counter.
  * @see danogl.GameObject
- * @see main.bricker.strategies.CollisionStrategy
- * @see main.bricker.BrickerGameManager
+ * @see bricker.strategies.CollisionStrategy
+ * @see bricker.main.BrickerGameManager
  * @author Aron Isaacs
  */
 public class Brick extends GameObject {

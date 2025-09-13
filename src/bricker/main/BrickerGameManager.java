@@ -1,4 +1,4 @@
-package main.bricker;
+package bricker.main;
 
 import danogl.GameManager;
 import danogl.GameObject;
@@ -8,9 +8,8 @@ import danogl.gui.*;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-import main.bricker.gameobjects.*;
-import main.bricker.strategies.BasicCollisionStrategy;
-import main.bricker.strategies.CollisionStrategy;
+import bricker.gameobjects.*;
+import bricker.strategies.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.Random;
@@ -27,12 +26,12 @@ import java.util.Random;
  * @see danogl.gui.SoundReader
  * @see danogl.gui.ImageReader
  * @see danogl.util.Vector2
- * @see main.bricker.gameobjects.Ball
- * @see main.bricker.gameobjects.Paddle
- * @see main.bricker.gameobjects.Brick
- * @see main.bricker.gameobjects.LivesDisplay
- * @see main.bricker.strategies.CollisionStrategy
- * @see main.bricker.strategies.BasicCollisionStrategy
+ * @see bricker.gameobjects.Ball
+ * @see bricker.gameobjects.Paddle
+ * @see bricker.gameobjects.Brick
+ * @see bricker.gameobjects.LivesDisplay
+ * @see bricker.strategies.CollisionStrategy
+ * @see bricker.strategies.BasicCollisionStrategy
  * @author Aron Isaacs
  */
 public class BrickerGameManager extends GameManager {
