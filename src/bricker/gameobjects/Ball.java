@@ -19,7 +19,7 @@ public class Ball extends GameObject {
     private final Sound collisionSound;
     private int collisionCounter = 0;
     public static final float BALL_SIZE = 50f;
-    public static final float BALL_SPEED = 100f;
+    public static final float BALL_SPEED = 200f;
     public static final String BALL_IMAGE_PATH = "assets/ball.png";
     public static final String BALL_SOUND_PATH = "assets/blop.wav";
 
