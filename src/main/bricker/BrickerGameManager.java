@@ -115,7 +115,7 @@ public class BrickerGameManager extends GameManager {
         CollisionStrategy collisionStrategy = new BasicCollisionStrategy(this);
         makeBricks(collisionStrategy);
         gameState = new GameState(GameState.INITIAL_LIVES, numBricksPerRow * numRows);
-        livesDisplay = new LivesDisplay(GameState.INITIAL_LIVES, imageReader, this);
+        livesDisplay = new LivesDisplay(imageReader, this::addGameObject);
     }
 
     /*
@@ -148,13 +148,8 @@ public class BrickerGameManager extends GameManager {
     private void makeBrick(CollisionStrategy collisionStrategy,  int col, float brickWidth, float y, Renderable brickImage) {
         // Calculate x position based on column index
         float x = BORDER_THICKNESS + col * (brickWidth + Brick.BRICK_GAP);
-        GameObject brick = new Brick(
-            new Vector2(x, y),
-            new Vector2(brickWidth, Brick.BRICK_HEIGHT),
-                brickImage,
-                collisionStrategy,
-                this
-        );
+        GameObject brick = new Brick(new Vector2(x, y), new Vector2(brickWidth, Brick.BRICK_HEIGHT),
+                brickImage, collisionStrategy);
         gameObjects().addGameObject(brick, Layer.STATIC_OBJECTS);
     }
     /*
@@ -241,12 +236,16 @@ public class BrickerGameManager extends GameManager {
     }
 
     /**
-     * Decrements the brick counter in the game state.
-     * Called when a brick is destroyed to update the remaining brick count.
+     * Removes a brick from the game and decrements the brick counter in the game state.
+     * @param brick the brick game object to remove
      */
-    public void decrementBrickCounter() {
+    public void removeBrick(GameObject brick) {
+        gameObjects().removeGameObject(brick, Layer.STATIC_OBJECTS);
         gameState.decrementBricksCounter();
     }
+
+
+
 
     /**
      * Updates the game state each frame, checking for victory or loss conditions.

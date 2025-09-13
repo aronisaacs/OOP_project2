@@ -13,6 +13,7 @@ public class GameState {
     private final Counter lives;
     private final Counter bricks;
     public static final int INITIAL_LIVES = 3;
+    public static final int MAX_LIVES = 4;
     /**
      * Constructs a GameState with specified initial lives and total bricks.
      * @param initialLives the initial number of lives.

@@ -5,7 +5,6 @@ import danogl.GameObject;
 import danogl.collisions.Collision;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-import main.bricker.BrickerGameManager;
 import main.bricker.strategies.CollisionStrategy;
 
 /**
@@ -20,10 +19,9 @@ public class Brick extends GameObject {
     public static final float BRICK_GAP = 3f; // Gap between bricks
     public static final int DEFAULT_NUM_BRICKS_PER_ROW = 8;
     public static final int DEFAULT_NUM_ROWS = 7;
-    private CollisionStrategy collisionStrategy;
-    private final BrickerGameManager brickerGameManager;
     public static final float BRICK_HEIGHT = 15f;
     public static final String BRICK_IMAGE_PATH = "assets/brick.png";
+    private final CollisionStrategy collisionStrategy;
 
     /**
      * Constructs a Brick object with specified position, size, renderable, collision strategy, and game manager.
@@ -31,15 +29,11 @@ public class Brick extends GameObject {
      * @param dimensions the dimensions (width and height) of the brick.
      * @param renderable the visual representation of the brick.
      * @param collisionStrategy the strategy to execute upon collision.
-     * @param brickerGameManager the game manager to notify when the brick is hit.
      */
     public Brick(Vector2 topLeftCorner, Vector2 dimensions,
-                 Renderable renderable, CollisionStrategy collisionStrategy,
-                 BrickerGameManager brickerGameManager) {
+                 Renderable renderable, CollisionStrategy collisionStrategy) {
         super(topLeftCorner, dimensions, renderable);
         this.collisionStrategy = collisionStrategy;
-        this.brickerGameManager =  brickerGameManager;
-
     }
 
     /**
@@ -52,7 +46,5 @@ public class Brick extends GameObject {
     public void onCollisionEnter(GameObject other, Collision collision) {
         super.onCollisionEnter(other, collision);
         collisionStrategy.onCollision(this, other);
-        brickerGameManager.decrementBrickCounter();
-
     }
 }

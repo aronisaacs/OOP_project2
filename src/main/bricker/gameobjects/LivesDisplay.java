@@ -7,12 +7,11 @@ import danogl.gui.ImageReader;
 import danogl.gui.rendering.TextRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-import main.bricker.BrickerGameManager;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.function.BiConsumer;
 
 
 /**
@@ -35,31 +34,31 @@ public class LivesDisplay extends GameObject {
 
     /**
      * Constructs a LivesDisplay with the specified initial lives, image reader, and game manager.
-     * @param initialLives the initial number of lives to display.
      * @param imageReader the ImageReader to load the heart image.
-     * @param gameManager the BrickerGameManager to add game objects to.
+     * @param addObject a BiConsumer to add game objects to the game (used to add hearts and text).
      */
-    public LivesDisplay(int initialLives, ImageReader imageReader, BrickerGameManager gameManager) {
+    public LivesDisplay(ImageReader imageReader, BiConsumer<GameObject,Integer> addObject) {
         super(Vector2.ZERO, Vector2.ZERO, null);
 
         // Load assets
         heartImage = imageReader.readImage(HEART_IMAGE, true);
-        textRenderable = new TextRenderable(String.valueOf(initialLives));
-        textRenderable.setColor(getColorForLives(initialLives));
+        textRenderable = new TextRenderable(String.valueOf(GameState.INITIAL_LIVES));
+        textRenderable.setColor(getColorForLives(GameState.INITIAL_LIVES));
 
         GameObject numberDisplay = new GameObject(
                 new Vector2(HEART_START_POS.x(), HEART_START_POS.y() + HEART_SIZE.y() + 10),
                 NUMBER_DISPLAY_SIZE, textRenderable
         );
-        gameManager.addGameObject(numberDisplay, Layer.UI);
+        addObject.accept(numberDisplay, Layer.UI);
 
         // Create hearts (all added once)
-        for (int i = 0; i < initialLives; i++) {
+        for (int i = 0; i < GameState.MAX_LIVES; i++) {
             Vector2 pos = HEART_START_POS.add(new Vector2(i * HEART_SPACING, 0));
-            GameObject heart = new GameObject(pos, HEART_SIZE, heartImage);
+            GameObject heart = new GameObject(pos, HEART_SIZE, null);
             hearts.add(heart);
-            gameManager.addGameObject(heart, Layer.UI);
+            addObject.accept(heart, Layer.UI);
         }
+        updateLives(GameState.INITIAL_LIVES);
     }
 
     /**
