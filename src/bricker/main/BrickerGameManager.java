@@ -9,7 +9,7 @@ import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 import bricker.gameobjects.*;
-import bricker.strategies.*;
+import bricker.brick_strategies.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.Random;
@@ -30,8 +30,8 @@ import java.util.Random;
  * @see bricker.gameobjects.Paddle
  * @see bricker.gameobjects.Brick
  * @see bricker.gameobjects.LivesDisplay
- * @see bricker.strategies.CollisionStrategy
- * @see bricker.strategies.BasicCollisionStrategy
+ * @see bricker.brick_strategies.CollisionStrategy
+ * @see bricker.brick_strategies.BasicCollisionStrategy
  * @author Aron Isaacs
  */
 public class BrickerGameManager extends GameManager {
@@ -55,19 +55,6 @@ public class BrickerGameManager extends GameManager {
     private LivesDisplay livesDisplay;
 
     /**
-     * Constructor for BrickerGameManager.
-     * @param WINDOW_TITLE the title of the game window
-     * @param windowDimensions the dimensions of the game window
-     * @param numBricksPerRow the number of bricks per row
-     * @param numRows the number of rows of bricks
-     */
-    public BrickerGameManager(String WINDOW_TITLE, Vector2 windowDimensions, int numBricksPerRow, int numRows) {
-        super(WINDOW_TITLE, windowDimensions);
-        this.windowDimensions = windowDimensions;
-        this.numBricksPerRow = numBricksPerRow;
-        this.numRows = numRows;
-    }
-    /**
      * The main method to start the Bricker game.
      * Accepts optional command-line arguments for the number of bricks per row and the number of rows.
      * If no arguments are provided, default values are used.
@@ -81,6 +68,20 @@ public class BrickerGameManager extends GameManager {
             numRows = Integer.parseInt(args[1]);
         }
         new BrickerGameManager(WINDOW_TITLE, WINDOW_DIMENSIONS, numBricksPerRow, numRows).run();
+    }
+
+    /**
+     * Constructor for BrickerGameManager.
+     * @param WINDOW_TITLE the title of the game window
+     * @param windowDimensions the dimensions of the game window
+     * @param numBricksPerRow the number of bricks per row
+     * @param numRows the number of rows of bricks
+     */
+    public BrickerGameManager(String WINDOW_TITLE, Vector2 windowDimensions, int numBricksPerRow, int numRows) {
+        super(WINDOW_TITLE, windowDimensions);
+        this.windowDimensions = windowDimensions;
+        this.numBricksPerRow = numBricksPerRow;
+        this.numRows = numRows;
     }
 
     /**
@@ -104,7 +105,7 @@ public class BrickerGameManager extends GameManager {
 
     /*
      * Creates and initializes all game objects including the background, borders, paddle, ball, bricks,
-     * and the game state. Sets up collision strategies and the lives display.
+     * and the game state. Sets up collision brick_strategies and the lives display.
      */
     private void makeGameObjects() {
         makeBackground();
@@ -131,9 +132,8 @@ public class BrickerGameManager extends GameManager {
         CollisionStrategy collisionStrategy = new BasicCollisionStrategy(this);
         // Create bricks in a grid layout
         for (int row = 0; row < numRows; row++) {
-            float y = BORDER_THICKNESS + row * (Brick.BRICK_HEIGHT + Brick.BRICK_GAP);
             for (int col = 0; col < numBricksPerRow; col++) {
-                makeBrick(collisionStrategy, col, brickWidth,  y,  brickImage);
+                makeBrick(collisionStrategy, col, brickWidth,  row,  brickImage);
             }
         }
     }
@@ -146,10 +146,12 @@ public class BrickerGameManager extends GameManager {
      * @param y the y-coordinate for the brick's position
      * @param brickImage the image to use for rendering the brick
      */
-    private void makeBrick(CollisionStrategy collisionStrategy,  int col, float brickWidth, float y, Renderable brickImage) {
+    private void makeBrick(CollisionStrategy collisionStrategy,  int col, float brickWidth, int row,
+						   Renderable brickImage) {
         // Calculate x position based on column index
         float x = BORDER_THICKNESS + col * (brickWidth + Brick.BRICK_GAP);
-        GameObject brick = new Brick(new Vector2(x, y), new Vector2(brickWidth, Brick.BRICK_HEIGHT),
+		float y = BORDER_THICKNESS + row * (Brick.BRICK_HEIGHT + Brick.BRICK_GAP);
+        GameObject brick = new Brick(row, col, new Vector2(x, y), new Vector2(brickWidth, Brick.BRICK_HEIGHT),
                 brickImage, collisionStrategy);
         gameObjects().addGameObject(brick, Layer.STATIC_OBJECTS);
     }

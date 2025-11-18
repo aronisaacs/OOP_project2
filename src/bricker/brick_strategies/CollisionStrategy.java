@@ -1,4 +1,4 @@
-package bricker.strategies;
+package bricker.brick_strategies;
 
 import danogl.GameObject;
 
@@ -11,8 +11,8 @@ public interface CollisionStrategy {
 
     /**
      * Method to be called when a collision occurs between two game objects.
-     * @param brick the brick that was collided with
-     * @param other the other game object involved in the collision
+     * @param thisObj the brick that was collided with
+     * @param otherObj  the other game object involved in the collision
      */
-    void onCollision(GameObject brick, GameObject other);
+    void onCollision(GameObject thisObj, GameObject otherObj);
 }

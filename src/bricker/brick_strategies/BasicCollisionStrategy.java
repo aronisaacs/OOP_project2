@@ -1,4 +1,4 @@
-package bricker.strategies;
+package bricker.brick_strategies;
 
 import danogl.GameObject;
 
@@ -23,11 +23,11 @@ public class BasicCollisionStrategy implements CollisionStrategy {
 
     /**
      * Handles the collision event by removing the brick from the game.
-     * @param brick the brick that was collided with
-     * @param other the other game object involved in the collision
+     * @param thisObj the brick that was collided with
+     * @param otherObj the other game object involved in the collision
      */
     @Override
-    public void onCollision(GameObject brick, GameObject other) {
-        brickerGameManager.removeBrick(brick);
+    public void onCollision(GameObject thisObj, GameObject otherObj) {
+        brickerGameManager.removeBrick(thisObj);
     }
 }

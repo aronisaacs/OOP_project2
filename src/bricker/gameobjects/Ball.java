@@ -17,7 +17,6 @@ import danogl.util.Vector2;
 public class Ball extends GameObject {
 
     private final Sound collisionSound;
-    private int collisionCounter = 0;
     public static final float BALL_SIZE = 50f;
     public static final float BALL_SPEED = 200f;
     public static final String BALL_IMAGE_PATH = "assets/ball.png";
@@ -35,13 +34,7 @@ public class Ball extends GameObject {
         this.collisionSound = collisionSound;
     }
 
-    /**
-     * Returns the number of collisions the ball has had.
-     * @return the collision count.
-     */
-    public int getCollisionCounter() {
-        return collisionCounter;
-    }
+
     /**
      * Handles collision events by bouncing the ball off the surface it collides with,
      * playing a collision sound, and incrementing the collision counter.
@@ -54,7 +47,7 @@ public class Ball extends GameObject {
         Vector2 newVelocity = getVelocity().flipped(collision.getNormal());
         setVelocity(newVelocity);
         //uncomment to enable sound!!
-        //collisionSound.play();
-        collisionCounter++;
+        collisionSound.play();
+
     }
 }
