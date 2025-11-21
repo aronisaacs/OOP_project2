@@ -47,7 +47,6 @@ public class Ball extends GameObject {
         Vector2 newVelocity = getVelocity().flipped(collision.getNormal());
         setVelocity(newVelocity);
         //uncomment to enable sound!!
-        collisionSound.play();
-
+//        collisionSound.play();
     }
 }

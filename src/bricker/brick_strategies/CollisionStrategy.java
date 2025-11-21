@@ -16,3 +16,25 @@ public interface CollisionStrategy {
      */
     void onCollision(GameObject thisObj, GameObject otherObj);
 }
+/*
+public interface CollisionStrategy{
+void onCollision(GameObject thisObj, GameObject otherObj);}
+
+public class BasicCollisionStrategy implements CollisionStrategy{}
+
+public abstract class CollisionStrategyDecorator implements CollisionStrategy{}
+
+public class ExtraLife extends CollisionStrategyDecorator{}
+
+public class ExplodingBricks extends CollisionStrategyDecorator{}
+
+public class ExtraPuck extends CollisionStrategyDecorator{}
+
+public class ExtraPaddle extends CollisionStrategyDecorator{}
+
+public class DoubleStrategy extends CollisionStrategyDecorator{}
+
+public class CollisionStrategyFactory extends CollisionStrategyDecorator{
+}
+
+ */

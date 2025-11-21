@@ -129,11 +129,11 @@ public class BrickerGameManager extends GameManager {
         Renderable brickImage = imageReader.readImage(Brick.BRICK_IMAGE_PATH, false);
         // Use a basic collision strategy for bricks. main part to be changed for the final part of the
         // assignment!!
-        CollisionStrategy collisionStrategy = new BasicCollisionStrategy(this);
+        CollisionStrategyFactory collisionStrategyFactory = new CollisionStrategyFactory();
         // Create bricks in a grid layout
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numBricksPerRow; col++) {
-                makeBrick(collisionStrategy, col, brickWidth,  row,  brickImage);
+                makeBrick(collisionStrategyFactory.buildCollisionStrategy(this), col, brickWidth,  row,  brickImage);
             }
         }
     }
@@ -293,5 +293,21 @@ public class BrickerGameManager extends GameManager {
         } else {
             windowController.closeWindow();
         }
+    }
+
+    /**
+     * Gets the ImageReader used in the game.
+     * @return the ImageReader instance
+     */
+    public ImageReader getImageReader() {
+        return this.imageReader;
+    }
+
+    /**
+     * Gets the SoundReader used in the game.
+     * @return the SoundReader instance
+     */
+    public SoundReader getSoundReader() {
+        return this.soundReader;
     }
 }
