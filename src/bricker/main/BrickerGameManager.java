@@ -33,13 +33,13 @@ import java.util.Random;
  * @see bricker.brick_strategies.CollisionStrategy
  * @see bricker.brick_strategies.BasicCollisionStrategy
  * @author Aron Isaacs
+ * @author Ron Stein
  */
 public class BrickerGameManager extends GameManager {
-
     public static final String PUCK_TAG = "puck";
     public static final String HEART_TAG = Heart.HEART_TAG;
-    private static final float BORDER_THICKNESS = 5f;
 
+    private static final float BORDER_THICKNESS = 5f;
     private static final String BACKGROUND_IMAGE_PATH = "assets/DARK_BG2_small.jpeg";
     private static final String EXPLODE_SOUND_PATH = "assets/explosion.wav";
     private static final Vector2 WINDOW_DIMENSIONS = new Vector2(800, 600);
@@ -49,9 +49,11 @@ public class BrickerGameManager extends GameManager {
     private static final int NUM_NEIGHBORS = 4;
     private static final Vector2 HEART_VELOCITY = new Vector2(0, 100f);
     private static final String MAIN_PADDLE = "main paddle";
+
     private final Vector2 windowDimensions;
     private final int numBricksPerRow;
     private final int numRows;
+
     private SoundReader soundReader;
     private Sound explodeSound;
     private UserInputListener inputListener;
@@ -84,7 +86,8 @@ public class BrickerGameManager extends GameManager {
      * @param numBricksPerRow the number of bricks per row
      * @param numRows the number of rows of bricks
      */
-    public BrickerGameManager(String WINDOW_TITLE, Vector2 windowDimensions, int numBricksPerRow, int numRows) {
+    public BrickerGameManager(String WINDOW_TITLE, Vector2 windowDimensions,
+                              int numBricksPerRow, int numRows) {
         super(WINDOW_TITLE, windowDimensions);
         this.windowDimensions = windowDimensions;
         this.numBricksPerRow = numBricksPerRow;
@@ -118,7 +121,8 @@ public class BrickerGameManager extends GameManager {
     private void makeGameObjects() {
         makeBackground();
         makeBorders();
-        gameState = new GameState(GameState.INITIAL_LIVES, numBricksPerRow * numRows, GameState.INITIAL_PADDLES);
+        gameState = new GameState(GameState.INITIAL_LIVES,
+                numBricksPerRow * numRows, GameState.INITIAL_PADDLES);
         makeBall();
         makePaddle(windowDimensions.y() - Paddle.PADDLE_OFFSET_FROM_BOTTOM);
         makeBricks();
@@ -165,6 +169,7 @@ public class BrickerGameManager extends GameManager {
                 brickImage, collisionStrategy);
         gameObjects().addGameObject(brick, Layer.STATIC_OBJECTS);
     }
+
     /*
      * Creates the borders around the game window to contain the ball and paddle within the playable area.
      * Borders are created on the left, right, and top sides of the window.
@@ -215,7 +220,8 @@ public class BrickerGameManager extends GameManager {
 
     /*
      * Creates the ball object, sets its initial position and velocity, and adds it to the game.
-     * The ball will bounce off walls, the paddle, and bricks, and its behavior is managed by collision detection.
+     * The ball will bounce off walls, the paddle, and bricks, and its behavior
+     * is managed by collision detection.
      */
     private void makeBall() {
         Renderable ballImage = imageReader.readImage(Ball.BALL_IMAGE_PATH, true);
@@ -225,6 +231,7 @@ public class BrickerGameManager extends GameManager {
         resetBall();
         gameObjects().addGameObject(ball);
     }
+
     /**
      * Spawns a heart object centered at the specified brick center position.
      * The heart will move downwards with a predefined velocity.
@@ -239,6 +246,7 @@ public class BrickerGameManager extends GameManager {
         addGameObject(heart, Layer.DEFAULT);
         heart.setVelocity(HEART_VELOCITY);
     }
+
     /*
      * Resets the ball's position to the center of the window and assigns it a random initial velocity.
      * The ball will start moving in a random direction when reset.
@@ -250,13 +258,16 @@ public class BrickerGameManager extends GameManager {
         float ballSpeedY = Ball.BALL_SPEED * (random.nextBoolean() ? 1 : -1);
         ball.setVelocity(new Vector2(ballSpeedX, ballSpeedY));
     }
+
     /*
      * Creates and sets the background image for the game window.
      * The background image is scaled to fit the entire window dimensions.
      */
     private void makeBackground() {
-        Renderable backgroundImage = imageReader.readImage(BACKGROUND_IMAGE_PATH, false);
-        GameObject background = new GameObject(Vector2.ZERO, windowController.getWindowDimensions(), backgroundImage);
+        Renderable backgroundImage =
+                imageReader.readImage(BACKGROUND_IMAGE_PATH, false);
+        GameObject background =
+                new GameObject(Vector2.ZERO, windowController.getWindowDimensions(), backgroundImage);
         background.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
         gameObjects().addGameObject(background, Layer.BACKGROUND);
     }
@@ -290,12 +301,17 @@ public class BrickerGameManager extends GameManager {
         }
     }
 
+    /**
+     * Handles the logic when a sub-paddle is hit by the ball.
+     * Increments the hit counter and removes the sub-paddle if it has been hit the maximum number of times.
+     * @param subPaddle the sub-paddle game object that was hit
+     */
     public void subPaddleHit(GameObject subPaddle) {
-        //remove subpaddle and reset counter after 4 hits
+        //remove sub paddle and reset counter after 4 hits
         if (gameState.getSubPaddleHitsCounter() >= gameState.SUB_PADDLES_MAX_HITS) {
             gameObjects().removeGameObject(subPaddle);
             gameState.resetSubPaddleHitsCounter();
-            return;
+            gameState.decrementPaddlesCounter();
         //increment subPaddle hits counter if less than 4 hits
         } else {
             gameState.incrementSubPaddleHitsCounter();
@@ -315,8 +331,7 @@ public class BrickerGameManager extends GameManager {
         int index = 0;
         //find neighbors and store them in an array
         for(GameObject go : gameObjects().objectsInLayer(Layer.STATIC_OBJECTS)){
-            if(go instanceof Brick){
-                Brick nextBrick = (Brick) go;
+            if(go instanceof Brick nextBrick){
                 //left and right neighbors
                 if(nextBrick.getCol() == j && Math.abs(nextBrick.getRow() - i) == 1){
                     neighbors[index] = nextBrick;
@@ -335,6 +350,7 @@ public class BrickerGameManager extends GameManager {
             b.onCollisionEnter(ball, null);
         }
     }
+
     /**
      * Updates the game state each frame, checking for victory or loss conditions.
      * If the ball falls below the screen, the player loses a life and the ball is reset.

@@ -1,0 +1,52 @@
+ron.stein,aron.isaacs
+209755958,
+
+Question 1: What design pattern did we use in section 1.7 in order to allow Bricks to disappear from
+the game? What are the advantages and disadvantages of using this pattern?
+All instances of Brick are added to the GameObjectCollection container they are created. Therefore, in order
+to remove hit bricks from the game the BasicCollisionStrategy class (which all bricks have)
+calls the removeGameObject method that belongs to GameObjectCollection, but it is overloaded in the
+GameManager class. The overloaded method removes the brick from the container. Advantages of this pattern
+are that it implements the DanoGameLab container functionality, and it allows for easy removal of
+GameObjects. A disadvantage is that it couples the Brick class to the GameObjectCollection class.
+
+Question 2: Explain how we implemented the Life Display in section 1.8. Explain what each class involved
+does in order to implement this functionality.
+We chose to make a LivesDisplay class that extends the GameObject class. The LivesDisplay class is
+responsible for showing or hiding the remaining lives and the number of lives left. In addition, we added
+a GameState class that is responsible for counting and incrementing/decrementing the number of lives,
+paddles, number of hits on the subpaddle, bricks, victory, game over. Essentially, all the dynamic counting
+and checks that need to happen throughout the game are done in the GameState class.
+
+Question 3: Explain briefly how we implemented each collision strategy behavior. What classes were
+involved and what did they do?
+In order to allow decorated collision strategies, we created an abstract class called
+CollisionStrategyDecorator that implements the CollisionStrategy interface. This class is what allows us
+to decorate existing collision strategies. Each concrete decorator class extends the
+CollisionStrategyDecorator class and overrides the onCollision method to add its own behavior. There is
+a factory class that is responsible for decorating the brick with concrete collision classes.
+For the extra balls behavior 2.2.1, we created the ExtraPuck class, it creates two instances of Ball with
+slightly different values than the main ball and adds them to the game with position and velocity.
+For the extra paddle behavior 2.2.2, we created the ExtraPaddle concrete decorator class. It calls the same
+makePaddle() method from the GameManager class to create a new paddle at a different location with a tag
+that allows us to identify it as an extra paddle. We created a SubPaddle class that extends the Paddle class
+to differentiate between the main paddle and the extra paddle.
+For the exploding bricks behavior 2.2.3, we created the ExplodingBrick concrete decorator class. Similar
+to the ExtraPaddle class, it calls a method in the GameManager that is responsible for exploding the
+surrounding bricks. An exploded brick is tagged exploded in order to avoid infinnite chain reactions
+between neighboring exploding bricks. The explodeBricks method in GameManager iterates through the
+GameObjectCollection to find the neighboring bricks and triggers their onCollision method.
+For the returning life behavior 2.2.4, we created a Heart class that extends the GameObject class.
+We also created two collision strategy classes, ExtraLife which extends the decorator and can be added to a
+brick, and secondly the HeartCollisionStrategy class that is responsible for handling the collision
+specifically between the main paddle and the Heart object.
+
+Question 4: Explain how we implemented the double strategy behavior in 2.2.5, and how we limited the
+strategies to 3 per brick.
+All of the logic for the double strategy behavior is implemented in the CollisionStrategyFactory class.
+When a brick is created, if randomly by 1/10 chance it is decided that the brick will have a double strategy,
+then a seperate method that handles double strategies is called. It recursively randomly chooses more random
+strategies and decorates the brick with them one at a time. A MAX_STRATEGIES constant is defined in order
+to prevent more than 3 strategies, and a MAX_DEPTH constant is defined in order to prevent the double
+strategy to be chosen randomly an infinite amount of times. MAX_STRATEGIES can be changed to allow
+more or less strategies per brick given the double strategy behavior is chosen.

@@ -40,8 +40,6 @@ public class Brick extends GameObject {
 		this.collisionStrategy = collisionStrategy;
     }
 
-
-
     /**
      * Handles collision events by executing the brick's collision strategy
      * and notifying the game manager to decrement the brick counter.
@@ -61,7 +59,8 @@ public class Brick extends GameObject {
 	public int getRow() {
 		return row;
 	}
-/**
+
+    /**
 	 * Get the column of the brick
 	 * @return the column of the brick
 	 */

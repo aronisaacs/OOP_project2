@@ -53,19 +53,21 @@ public class GameState {
         paddles.increment();
     }
 
-
     /** Decrements the bricks counter by one. */
     public void decrementBricksCounter(){
         bricks.decrement();
     }
+
     /** Increments the sub-paddle hits counter by one. */
     public void incrementSubPaddleHitsCounter() {
         subPaddleHits.increment();
     }
+
     /** Resets the sub-paddle hits counter to zero. */
     public void resetSubPaddleHitsCounter() {
         subPaddleHits.reset();
     }
+
     /** gets the current number of lives.
      * @return the current number of lives.
      */
@@ -85,12 +87,11 @@ public class GameState {
      * @return true if all bricks are destroyed, false otherwise.
      */
     public boolean isVictory() { return bricks.value() == 0;}
+
     /** decides if the game is over.
      * @return true if no lives remain, false otherwise.
      */
     public boolean isGameOver() { return lives.value() <= 0; }
-
-
 }
 
 

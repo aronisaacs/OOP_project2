@@ -1,9 +1,7 @@
 package bricker.brick_strategies;
 
 import danogl.GameObject;
-
 import bricker.main.BrickerGameManager;
-
 
 /**
  * A basic collision strategy that removes the brick from the game upon collision.
@@ -14,9 +12,12 @@ import bricker.main.BrickerGameManager;
  * @author Aron Isaacs
  */
 public class BasicCollisionStrategy implements CollisionStrategy {
-
     private final BrickerGameManager brickerGameManager;
 
+    /**
+     * Constructor for the BasicCollisionStrategy.
+     * @param brickerGameManager The game manager to handle brick removal.
+     */
     public BasicCollisionStrategy(BrickerGameManager brickerGameManager) {
         this.brickerGameManager = brickerGameManager;
     }

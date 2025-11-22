@@ -8,20 +8,28 @@ import danogl.gui.Sound;
 import danogl.gui.SoundReader;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-
 import java.util.Random;
-
 import static bricker.gameobjects.Ball.BALL_SIZE;
 import static bricker.gameobjects.Ball.BALL_SOUND_PATH;
 
+/**
+ * A collision strategy that creates two extra pucks when a brick is hit.
+ * Extends the CollisionStrategyDecorator to add this behavior on top of an existing strategy.
+ * @author Ron Stein
+ */
 public class ExtraPuck extends CollisionStrategyDecorator {
     public static final String PUCK_IMAGE_PATH = "assets/mockBall.png";
     public static final float PUCK_SIZE = BALL_SIZE*0.75f;
     private final Random random = new Random();
-    private ImageReader imageReader;
-    private SoundReader soundReader;
-    private BrickerGameManager brickerGameManager;
+    private final ImageReader imageReader;
+    private final SoundReader soundReader;
+    private final BrickerGameManager brickerGameManager;
 
+    /**
+     * Constructor for the ExtraPuck strategy.
+     * @param decorated          The CollisionStrategy to be decorated.
+     * @param brickerGameManager The game manager to handle brick removal.
+     */
     public ExtraPuck(CollisionStrategy decorated, BrickerGameManager brickerGameManager) {
             super(decorated);
             this.brickerGameManager = brickerGameManager;
@@ -29,13 +37,18 @@ public class ExtraPuck extends CollisionStrategyDecorator {
             this.soundReader = brickerGameManager.getSoundReader();
     }
 
+    /**
+     * Handles the collision event by creating two new pucks at the location of the hit brick.
+     * @param thisObj the brick that was collided with
+     * @param otherObj  the other game object involved in the collision
+     */
     @Override
     public void onCollision(danogl.GameObject thisObj, danogl.GameObject otherObj) {
         super.onCollision(thisObj, otherObj);
-        //creating a new puck
         makePucks(thisObj);
     }
-    /*  * creates a new puck in the center of the brick that was hit
+
+    /*creates a new pucks in the center of the brick that was hit
      */
     private void makePucks(danogl.GameObject thisObj){
         //creating the puck
@@ -48,8 +61,7 @@ public class ExtraPuck extends CollisionStrategyDecorator {
         Ball[] pucks = {puck1, puck2};
         for(Ball puck : pucks){
             // this is to distinguish between the main ball and the pucks
-            puck.setTag(brickerGameManager.PUCK_TAG);
-
+            puck.setTag(BrickerGameManager.PUCK_TAG);
             //initializing the location and velocity of the puck
             puck.setCenter(thisObj.getCenter());
             double angle = random.nextDouble() * Math.PI;
@@ -58,6 +70,5 @@ public class ExtraPuck extends CollisionStrategyDecorator {
             puck.setVelocity(new Vector2(velocityX, velocityY));
             this.brickerGameManager.addGameObject(puck, Layer.DEFAULT);
         }
-
     }
 }
