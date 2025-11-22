@@ -36,6 +36,8 @@ import java.util.Random;
  */
 public class BrickerGameManager extends GameManager {
 
+    public static final String PUCK_TAG = "puck";
+    public static final String HEART_TAG = Heart.HEART_TAG;
     private static final float BORDER_THICKNESS = 5f;
 
     private static final String BACKGROUND_IMAGE_PATH = "assets/DARK_BG2_small.jpeg";
@@ -139,7 +141,9 @@ public class BrickerGameManager extends GameManager {
         // Create bricks in a grid layout
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numBricksPerRow; col++) {
-                makeBrick(collisionStrategyFactory.buildCollisionStrategy(this), col, brickWidth,  row,  brickImage);
+                CollisionStrategy basicStrategy = new BasicCollisionStrategy(this);
+                makeBrick(collisionStrategyFactory.buildCollisionStrategy(basicStrategy,
+                        this), col, brickWidth,  row,  brickImage);
             }
         }
     }
@@ -167,12 +171,15 @@ public class BrickerGameManager extends GameManager {
      */
     private void makeBorders() {
         Renderable wallImage = new RectangleRenderable(Color.CYAN);
-        GameObject leftBorder = new GameObject(Vector2.ZERO, new Vector2(BORDER_THICKNESS, windowDimensions.y()), wallImage);
+        GameObject leftBorder = new GameObject(Vector2.ZERO, new Vector2(BORDER_THICKNESS,
+                windowDimensions.y()), wallImage);
         gameObjects().addGameObject(leftBorder);
-        GameObject rightBorder = new GameObject(new Vector2(windowDimensions.x() - BORDER_THICKNESS, 0),
+        GameObject rightBorder = new GameObject(
+                new Vector2(windowDimensions.x() - BORDER_THICKNESS, 0),
                 new Vector2(BORDER_THICKNESS, windowDimensions.y()), wallImage);
         gameObjects().addGameObject(rightBorder);
-        GameObject topBorder = new GameObject(Vector2.ZERO, new Vector2(windowDimensions.x(), BORDER_THICKNESS),
+        GameObject topBorder = new GameObject(Vector2.ZERO,
+                new Vector2(windowDimensions.x(), BORDER_THICKNESS),
                 wallImage);
         gameObjects().addGameObject(topBorder);
     }
@@ -355,6 +362,13 @@ public class BrickerGameManager extends GameManager {
                 resetBall();
             } else {
                 showEndGameWindow(LOSE_MESSAGE);
+            }
+        }
+        for(GameObject obj : gameObjects().objectsInLayer(Layer.DEFAULT)){
+            String currentTag = obj.getTag();
+            if(!currentTag.equals(HEART_TAG) && !currentTag.equals(PUCK_TAG)) continue;
+            if(obj.getCenter().y() > windowDimensions.y()){
+                gameObjects().removeGameObject(obj, Layer.DEFAULT);
             }
         }
     }
