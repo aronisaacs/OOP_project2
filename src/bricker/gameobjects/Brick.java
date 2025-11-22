@@ -16,17 +16,13 @@ import bricker.brick_strategies.CollisionStrategy;
  * @author Aron Isaacs
  */
 public class Brick extends GameObject {
-    public static final float BRICK_GAP = 3f; // Gap between bricks
-    public static final int DEFAULT_NUM_BRICKS_PER_ROW = 8;
-    public static final int DEFAULT_NUM_ROWS = 6;
-    public static final float BRICK_HEIGHT = 15f;
-    public static final String BRICK_IMAGE_PATH = "assets/brick.png";
-	private final int row;
+    private final int row;
 	private final int col;
 	private final CollisionStrategy collisionStrategy;
 
     /**
-     * Constructs a Brick object with specified position, size, renderable, collision strategy, and game manager.
+     * Constructs a Brick object with specified position, size, renderable,
+     * collision strategy, and game manager.
      * @param topLeftCorner the top-left corner position of the brick.
      * @param dimensions the dimensions (width and height) of the brick.
      * @param renderable the visual representation of the brick.

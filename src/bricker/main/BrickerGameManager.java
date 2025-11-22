@@ -14,6 +14,8 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
+
+
 /**
  * The main class of the Bricker game, responsible for initializing and managing the game state.
  * It sets up the game window, creates game objects, and handles game updates.
@@ -36,24 +38,50 @@ import java.util.Random;
  * @author Ron Stein
  */
 public class BrickerGameManager extends GameManager {
-    public static final String PUCK_TAG = "puck";
-    public static final String HEART_TAG = Heart.HEART_TAG;
-
-    private static final float BORDER_THICKNESS = 5f;
+    /*Tags used to identify game objects */
+    private static final String PUCK_TAG = "puck";
+    private static final String HEART_TAG = "heart";
+    private static final String BORDER_TAG = "border";
+    private static final String MAIN_PADDLE_TAG = "main paddle";
+    /*Paths to relevant files */
+    private static final String PADDLE_IMAGE_PATH = "assets/paddle.png";
+    private static final String HEART_IMAGE_PATH = "assets/heart.png";
     private static final String BACKGROUND_IMAGE_PATH = "assets/DARK_BG2_small.jpeg";
     private static final String EXPLODE_SOUND_PATH = "assets/explosion.wav";
-    private static final Vector2 WINDOW_DIMENSIONS = new Vector2(800, 600);
-    private static final String WINDOW_TITLE = "Bricker";
+    private static final String BALL_SOUND_PATH = "assets/blop.wav";
+    private static final String BALL_IMAGE_PATH = "assets/ball.png";
+    private static final String BRICK_IMAGE_PATH = "assets/brick.png";
+    private static final String PUCK_IMAGE_PATH = "assets/mockBall.png";
+    /*Messages for UI dialogs*/
     private static final String WIN_MESSAGE = "You win! Play again?";
+    private static final String WINDOW_TITLE = "Bricker";
     private static final String LOSE_MESSAGE = "You lose! Play again?";
+    /*Paddle constants*/
+    private static final float PADDLE_HEIGHT = 15f;
+    private static final float PADDLE_WIDTH = 100f;
+    private static final float PADDLE_OFFSET_FROM_BOTTOM = 100f;
+    private final int SUB_PADDLES_MAX_HITS = 4;
+    private static final int INITIAL_PADDLES = 0;
+    /*Ball Brick Heart constants*/
+    private static final float BALL_SIZE = 50f;
+    private static final float PUCK_SIZE = BALL_SIZE*0.75f;
+    private static final float BALL_SPEED = 200f;
+    private static final float BRICK_GAP = 3f; // Gap between bricks
+    private static final int DEFAULT_NUM_BRICKS_PER_ROW = 8;
+    private static final int DEFAULT_NUM_ROWS = 6;
+    private static final float BRICK_HEIGHT = 15f;
     private static final int NUM_NEIGHBORS = 4;
-    private static final Vector2 HEART_VELOCITY = new Vector2(0, 100f);
-    private static final String MAIN_PADDLE = "main paddle";
-
-    private final Vector2 windowDimensions;
-    private final int numBricksPerRow;
     private final int numRows;
-
+    private final int numBricksPerRow;
+    private static final Vector2 HEART_SIZE = new Vector2(30, 30);
+    private static final Vector2 HEART_VELOCITY = new Vector2(0, 100f);
+    /*Game constants*/
+    private static final float BORDER_THICKNESS = 5f;
+    private static final Vector2 WINDOW_DIMENSIONS = new Vector2(800, 600);
+    private static final int MAX_LIVES = 4;
+    private static final int INITIAL_LIVES = 3;
+    private final Vector2 windowDimensions;
+    private final Random random = new Random();
     private SoundReader soundReader;
     private Sound explodeSound;
     private UserInputListener inputListener;
@@ -70,8 +98,8 @@ public class BrickerGameManager extends GameManager {
      * @param args command-line arguments: [numBricksPerRow, numRows]
      */
     public static void main(String[] args) {
-        int numBricksPerRow = Brick.DEFAULT_NUM_BRICKS_PER_ROW;
-        int numRows = Brick.DEFAULT_NUM_ROWS;
+        int numBricksPerRow = DEFAULT_NUM_BRICKS_PER_ROW;
+        int numRows = DEFAULT_NUM_ROWS;
         if (args.length == 2) {
             numBricksPerRow = Integer.parseInt(args[0]);
             numRows = Integer.parseInt(args[1]);
@@ -121,12 +149,13 @@ public class BrickerGameManager extends GameManager {
     private void makeGameObjects() {
         makeBackground();
         makeBorders();
-        gameState = new GameState(GameState.INITIAL_LIVES,
-                numBricksPerRow * numRows, GameState.INITIAL_PADDLES);
+        gameState = new GameState(INITIAL_LIVES,
+                numBricksPerRow * numRows, INITIAL_PADDLES, MAX_LIVES);
         makeBall();
-        makePaddle(windowDimensions.y() - Paddle.PADDLE_OFFSET_FROM_BOTTOM);
+        makePaddle(windowDimensions.y() - PADDLE_OFFSET_FROM_BOTTOM);
         makeBricks();
-        livesDisplay = new LivesDisplay(imageReader, this::addGameObject);
+        livesDisplay = new LivesDisplay(imageReader, this::addGameObject, INITIAL_LIVES,
+                MAX_LIVES, HEART_IMAGE_PATH, HEART_SIZE);
     }
 
     /*
@@ -136,9 +165,9 @@ public class BrickerGameManager extends GameManager {
      */
     private void makeBricks() {
         // Calculate brick width based on available space and gaps
-        float totalGap = 2 * BORDER_THICKNESS + (numBricksPerRow - 1) * Brick.BRICK_GAP;
+        float totalGap = 2 * BORDER_THICKNESS + (numBricksPerRow - 1) * BRICK_GAP;
         float brickWidth = (windowDimensions.x() - totalGap) / numBricksPerRow;
-        Renderable brickImage = imageReader.readImage(Brick.BRICK_IMAGE_PATH, false);
+        Renderable brickImage = imageReader.readImage(BRICK_IMAGE_PATH, false);
         // Use a basic collision strategy for bricks. main part to be changed for the final part of the
         // assignment!!
         CollisionStrategyFactory collisionStrategyFactory = new CollisionStrategyFactory();
@@ -163,9 +192,9 @@ public class BrickerGameManager extends GameManager {
     private void makeBrick(CollisionStrategy collisionStrategy,  int col, float brickWidth, int row,
 						   Renderable brickImage) {
         // Calculate x position based on column index
-        float x = BORDER_THICKNESS + col * (brickWidth + Brick.BRICK_GAP);
-		float y = BORDER_THICKNESS + row * (Brick.BRICK_HEIGHT + Brick.BRICK_GAP);
-        GameObject brick = new Brick(row, col, new Vector2(x, y), new Vector2(brickWidth, Brick.BRICK_HEIGHT),
+        float x = BORDER_THICKNESS + col * (brickWidth + BRICK_GAP);
+		float y = BORDER_THICKNESS + row * (BRICK_HEIGHT + BRICK_GAP);
+        GameObject brick = new Brick(row, col, new Vector2(x, y), new Vector2(brickWidth, BRICK_HEIGHT),
                 brickImage, collisionStrategy);
         gameObjects().addGameObject(brick, Layer.STATIC_OBJECTS);
     }
@@ -187,6 +216,10 @@ public class BrickerGameManager extends GameManager {
                 new Vector2(windowDimensions.x(), BORDER_THICKNESS),
                 wallImage);
         gameObjects().addGameObject(topBorder);
+        GameObject[] borders = {leftBorder, rightBorder, topBorder};
+        for (GameObject border : borders) {
+            border.setTag(BORDER_TAG);
+        }
     }
 
     /**
@@ -198,21 +231,21 @@ public class BrickerGameManager extends GameManager {
         if(gameState.getPaddlesCounter()>=2){
             return;
         }
-        Renderable paddleImage = imageReader.readImage(Paddle.PADDLE_IMAGE_PATH, true);
+        Renderable paddleImage = imageReader.readImage(PADDLE_IMAGE_PATH, true);
         Vector2 initialPosition = new Vector2(windowDimensions.x() / 2f, paddleYPosition);
         if(gameState.getPaddlesCounter()==0){
-            GameObject paddle = new Paddle(initialPosition, new Vector2(Paddle.PADDLE_WIDTH,
-                    Paddle.PADDLE_HEIGHT),
+            GameObject paddle = new Paddle(initialPosition, new Vector2(PADDLE_WIDTH,
+                    PADDLE_HEIGHT),
                     windowDimensions , paddleImage
                     , inputListener);
-            paddle.setTag(MAIN_PADDLE);
+            paddle.setTag(MAIN_PADDLE_TAG);
             gameObjects().addGameObject(paddle);
         }
         else {
-            GameObject subPaddle = new SubPaddle(initialPosition, new Vector2(Paddle.PADDLE_WIDTH,
-                    Paddle.PADDLE_HEIGHT),
+            GameObject subPaddle = new SubPaddle(initialPosition, new Vector2(PADDLE_WIDTH,
+                    PADDLE_HEIGHT),
                     windowDimensions , paddleImage
-                    , inputListener, this);
+                    , inputListener, this, BORDER_TAG);
             gameObjects().addGameObject(subPaddle);
         }
         gameState.incrementPaddlesCounter();
@@ -224,12 +257,39 @@ public class BrickerGameManager extends GameManager {
      * is managed by collision detection.
      */
     private void makeBall() {
-        Renderable ballImage = imageReader.readImage(Ball.BALL_IMAGE_PATH, true);
-        Sound collisionSound = soundReader.readSound(Ball.BALL_SOUND_PATH);
-        ball = new Ball(Vector2.ZERO, new Vector2(Ball.BALL_SIZE, Ball.BALL_SIZE), ballImage,
+        Renderable ballImage = imageReader.readImage(BALL_IMAGE_PATH, true);
+        Sound collisionSound = soundReader.readSound(BALL_SOUND_PATH);
+        ball = new Ball(Vector2.ZERO, new Vector2(BALL_SIZE, BALL_SIZE), ballImage,
                 collisionSound);
         resetBall();
         gameObjects().addGameObject(ball);
+    }
+
+    /**
+     * Creates two puck objects at the location of the specified game object.
+     * Each puck is given a random initial velocity and added to the game.
+     * @param thisObj brick that was hit and where the pucks will be created
+     */
+    public void makePucks(danogl.GameObject thisObj){
+        //creating the puck
+        Renderable puckImage = imageReader.readImage(PUCK_IMAGE_PATH, true);
+        Sound puckSound = soundReader.readSound(BALL_SOUND_PATH);
+        Ball puck1 = new Ball(thisObj.getTopLeftCorner(),
+                new Vector2(PUCK_SIZE, PUCK_SIZE),puckImage, puckSound);
+        Ball puck2 = new Ball(thisObj.getTopLeftCorner(),
+                new Vector2(PUCK_SIZE, PUCK_SIZE),puckImage, puckSound);
+        Ball[] pucks = {puck1, puck2};
+        for(Ball puck : pucks){
+            // this is to distinguish between the main ball and the pucks
+            puck.setTag(BrickerGameManager.PUCK_TAG);
+            //initializing the location and velocity of the puck
+            puck.setCenter(thisObj.getCenter());
+            double angle = random.nextDouble() * Math.PI;
+            float velocityX = (float)Math.cos(angle)*BALL_SPEED;
+            float velocityY = (float)Math.sin(angle)*BALL_SPEED;
+            puck.setVelocity(new Vector2(velocityX, velocityY));
+            addGameObject(puck, Layer.DEFAULT);
+        }
     }
 
     /**
@@ -238,11 +298,11 @@ public class BrickerGameManager extends GameManager {
      * @param brickCenter the center position of the brick where the heart should be spawned
      */
     public void spawnHeart(Vector2 brickCenter){
-        Renderable heartImage = imageReader.readImage(LivesDisplay.HEART_IMAGE, true);
-        float x = brickCenter.x() - LivesDisplay.HEART_SIZE.x()/2f;
-        float y = brickCenter.y() - LivesDisplay.HEART_SIZE.y()/2f;
-        Heart heart = new Heart(new Vector2(x,y), LivesDisplay.HEART_SIZE,
-                heartImage, MAIN_PADDLE, new HeartCollisionStrategy(this));
+        Renderable heartImage = imageReader.readImage(HEART_IMAGE_PATH, true);
+        float x = brickCenter.x() - HEART_SIZE.x()/2f;
+        float y = brickCenter.y() - HEART_SIZE.y()/2f;
+        Heart heart = new Heart(new Vector2(x,y), HEART_SIZE,
+                heartImage, MAIN_PADDLE_TAG, new HeartCollisionStrategy(this), HEART_TAG);
         addGameObject(heart, Layer.DEFAULT);
         heart.setVelocity(HEART_VELOCITY);
     }
@@ -254,8 +314,8 @@ public class BrickerGameManager extends GameManager {
     private void resetBall() {
         ball.setCenter(windowDimensions.mult(0.5f));
         Random random = new Random();
-        float ballSpeedX = Ball.BALL_SPEED * (random.nextBoolean() ? 1 : -1);
-        float ballSpeedY = Ball.BALL_SPEED * (random.nextBoolean() ? 1 : -1);
+        float ballSpeedX = BALL_SPEED * (random.nextBoolean() ? 1 : -1);
+        float ballSpeedY = BALL_SPEED * (random.nextBoolean() ? 1 : -1);
         ball.setVelocity(new Vector2(ballSpeedX, ballSpeedY));
     }
 
@@ -308,7 +368,7 @@ public class BrickerGameManager extends GameManager {
      */
     public void subPaddleHit(GameObject subPaddle) {
         //remove sub paddle and reset counter after 4 hits
-        if (gameState.getSubPaddleHitsCounter() >= gameState.SUB_PADDLES_MAX_HITS) {
+        if (gameState.getSubPaddleHitsCounter() >= SUB_PADDLES_MAX_HITS) {
             gameObjects().removeGameObject(subPaddle);
             gameState.resetSubPaddleHitsCounter();
             gameState.decrementPaddlesCounter();
@@ -401,22 +461,6 @@ public class BrickerGameManager extends GameManager {
         } else {
             windowController.closeWindow();
         }
-    }
-
-    /**
-     * Gets the ImageReader used in the game.
-     * @return the ImageReader instance
-     */
-    public ImageReader getImageReader() {
-        return this.imageReader;
-    }
-
-    /**
-     * Gets the SoundReader used in the game.
-     * @return the SoundReader instance
-     */
-    public SoundReader getSoundReader() {
-        return this.soundReader;
     }
 
     /**

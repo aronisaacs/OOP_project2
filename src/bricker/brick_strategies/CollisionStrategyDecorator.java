@@ -7,6 +7,7 @@ package bricker.brick_strategies;
  * @author Ron Stein
  */
 public abstract class CollisionStrategyDecorator implements CollisionStrategy{
+    /** The decorated CollisionStrategy. */
     protected CollisionStrategy decoratedStrategy;
 
     /**

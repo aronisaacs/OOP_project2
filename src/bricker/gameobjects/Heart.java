@@ -16,7 +16,6 @@ import danogl.util.Vector2;
 public class Heart extends GameObject {
     private final String mainPaddleTag;
     private final CollisionStrategy collisionStrategy;
-    public final static String HEART_TAG = "heart";
 
     /**
      * Constructs a Heart object with specified position, size, renderable,
@@ -28,7 +27,7 @@ public class Heart extends GameObject {
      * @param collisionStrategy the strategy to execute upon collision.
      */
     public Heart(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable, String mainPaddleTag,
-                 CollisionStrategy collisionStrategy) {
+                 CollisionStrategy collisionStrategy, String HEART_TAG) {
         super(topLeftCorner, dimensions, renderable);
         this.mainPaddleTag = mainPaddleTag;
         this.collisionStrategy = collisionStrategy;

@@ -14,14 +14,9 @@ import java.awt.event.KeyEvent;
  * @author Aron Isaacs
  */
 public class Paddle extends GameObject {
-    public static final float PADDLE_OFFSET_FROM_BOTTOM = 100f;
     private static final Float MOVEMENT_SPEED = 400.0f;
     private final Vector2 windowDimensions;
     private final UserInputListener inputListener;
-    public static final float PADDLE_WIDTH = 100f;
-    public static final float PADDLE_HEIGHT = 15f;
-    public static final String PADDLE_IMAGE_PATH = "assets/paddle.png";
-
     /**
      * Constructor for the Paddle class.
      * @param topLeftCorner The top-left corner of the paddle.

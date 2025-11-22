@@ -9,6 +9,7 @@ import bricker.main.BrickerGameManager;
  */
 public class SubPaddle extends Paddle{
     private final BrickerGameManager brickerGameManager;
+    private final String BORDER_TAG;
 
     /**
      * Constructor for the SubPaddle.
@@ -23,11 +24,23 @@ public class SubPaddle extends Paddle{
      */
     public SubPaddle(danogl.util.Vector2 topLeftCorner, danogl.util.Vector2 paddleDimensions,
                        danogl.util.Vector2 windowDimensions, danogl.gui.rendering.Renderable renderable,
-                       danogl.gui.UserInputListener inputListener, BrickerGameManager brickerGameManager) {
+                       danogl.gui.UserInputListener inputListener, BrickerGameManager brickerGameManager,
+                     String BORDER_TAG) {
         super(topLeftCorner, paddleDimensions, windowDimensions, renderable, inputListener);
         this.brickerGameManager = brickerGameManager;
+        this.BORDER_TAG = BORDER_TAG;
     }
 
+    /**
+     * Determines if this SubPaddle should collide with another GameObject.
+     * This is important to ensure that the SubPaddle does not interact with border objects.
+     * @param other The other GameObject.
+     * @return true if the other GameObject is not a border, false otherwise.
+     */
+    @Override
+    public boolean shouldCollideWith(danogl.GameObject other){
+        return !other.getTag().equals(BORDER_TAG);
+    }
     /**
      * Handles collision events by notifying the game manager when the sub-paddle is hit.
      * This is different behavior than the main paddle, because the game manager needs to track how many

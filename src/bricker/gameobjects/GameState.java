@@ -14,20 +14,18 @@ public class GameState {
     private final Counter bricks;
     private final Counter paddles;
     private final Counter subPaddleHits;
-    public final int SUB_PADDLES_MAX_HITS = 4;
-    public static final int INITIAL_LIVES = 3;
-    public static final int MAX_LIVES = 4;
-    public static final int INITIAL_PADDLES = 0;
+    private static int MAX_LIVES;
     /**
      * Constructs a GameState with specified initial lives and total bricks.
      * @param initialLives the initial number of lives.
      * @param totalBricks the total number of bricks.
      */
-    public GameState(int initialLives, int totalBricks, int totalPaddles) {
+    public GameState(int initialLives, int totalBricks, int totalPaddles, int maxLives) {
         lives = new Counter(initialLives);
         bricks = new Counter(totalBricks);
         paddles = new Counter(totalPaddles);
         subPaddleHits = new Counter(0);
+        MAX_LIVES = maxLives;
     }
     /** Decrements the lives counter by one.
     */

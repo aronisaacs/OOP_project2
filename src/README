@@ -1,5 +1,5 @@
-ron.stein,aron.isaacs
-209755958,
+ron.stein, aronisaacs
+209755958, 342808292
 
 Question 1: What design pattern did we use in section 1.7 in order to allow Bricks to disappear from
 the game? What are the advantages and disadvantages of using this pattern?
