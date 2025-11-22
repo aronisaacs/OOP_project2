@@ -440,6 +440,7 @@ public class BrickerGameManager extends GameManager {
                 showEndGameWindow(LOSE_MESSAGE);
             }
         }
+        //remove any puck or heart objects that have fallen below the screen
         for(GameObject obj : gameObjects().objectsInLayer(Layer.DEFAULT)){
             String currentTag = obj.getTag();
             if(!currentTag.equals(HEART_TAG) && !currentTag.equals(PUCK_TAG)) continue;
