@@ -28,15 +28,16 @@ public class CollisionStrategyFactory{
      * @return a CollisionStrategy instance.
      */
     public CollisionStrategy buildCollisionStrategy(BrickerGameManager brickerGameManager) {
-        int r = random.nextInt(2 * NUM_STRATEGIES);
+//        int r = random.nextInt(2 * NUM_STRATEGIES);
+        int r = random.nextInt(10);
         CollisionStrategy basicStrategy = new BasicCollisionStrategy(brickerGameManager);
         switch (r) {
             case EXTRA_PUCK:
                 return new ExtraPuck(basicStrategy, brickerGameManager);
-//            case EXTRA_PADDLE:
-////                return new ExtraPaddle(basicStrategy, brickerGameManager);
-//            case EXPLODING_BRICKS:
-////                return new ExplodingBricks(basicStrategy, brickerGameManager);
+            case EXTRA_PADDLE:
+                return new ExtraPaddle(basicStrategy, brickerGameManager);
+            case EXPLODING_BRICKS:
+                return new ExplodingBricks(basicStrategy, brickerGameManager);
 //            case EXTRA_LIFE:
 ////                return new ExtraLife(new ExtraLife(basicStrategy, brickerGameManager));
 //            case DOUBLE_STRATEGY:

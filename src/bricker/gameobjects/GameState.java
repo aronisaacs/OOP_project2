@@ -12,16 +12,22 @@ import danogl.util.Counter;
 public class GameState {
     private final Counter lives;
     private final Counter bricks;
+    private final Counter paddles;
+    private final Counter subPaddleHits;
+    public final int SUB_PADDLES_MAX_HITS = 4;
     public static final int INITIAL_LIVES = 3;
     public static final int MAX_LIVES = 4;
+    public static final int INITIAL_PADDLES = 0;
     /**
      * Constructs a GameState with specified initial lives and total bricks.
      * @param initialLives the initial number of lives.
      * @param totalBricks the total number of bricks.
      */
-    public GameState(int initialLives, int totalBricks) {
+    public GameState(int initialLives, int totalBricks, int totalPaddles) {
         lives = new Counter(initialLives);
         bricks = new Counter(totalBricks);
+        paddles = new Counter(totalPaddles);
+        subPaddleHits = new Counter(0);
     }
     /** Decrements the lives counter by one.
     */
@@ -34,15 +40,45 @@ public class GameState {
         lives.increment();
     }
 
+    /** Decrements the paddles counter by one.
+    */
+    public void decrementPaddlesCounter(){
+        paddles.decrement();
+    }
+
+    /** Increments the paddles counter by one. */
+    public void incrementPaddlesCounter(){
+        paddles.increment();
+    }
+
 
     /** Decrements the bricks counter by one. */
     public void decrementBricksCounter(){
         bricks.decrement();
     }
+    /** Increments the sub-paddle hits counter by one. */
+    public void incrementSubPaddleHitsCounter() {
+        subPaddleHits.increment();
+    }
+    /** Resets the sub-paddle hits counter to zero. */
+    public void resetSubPaddleHitsCounter() {
+        subPaddleHits.reset();
+    }
     /** gets the current number of lives.
      * @return the current number of lives.
      */
     public int getLivesCounter() { return lives.value(); }
+
+    /** gets the current number of Paddles.
+     * @return the current number of paddles.
+     */
+    public int getPaddlesCounter() {return paddles.value();}
+
+    /** gets the current number of hits on the sub-paddle.
+     * @return the current number of hits on the sub-paddle.
+     */
+    public int getSubPaddleHitsCounter() {return subPaddleHits.value();}
+
     /** decides if the game is won.
      * @return true if all bricks are destroyed, false otherwise.
      */
@@ -51,6 +87,8 @@ public class GameState {
      * @return true if no lives remain, false otherwise.
      */
     public boolean isGameOver() { return lives.value() <= 0; }
+
+
 }
 
 
