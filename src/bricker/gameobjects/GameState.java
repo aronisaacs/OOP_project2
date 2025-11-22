@@ -37,7 +37,9 @@ public class GameState {
 
     /** Increments the lives counter by one. */
     public void incrementLivesCounter(){
-        lives.increment();
+        if (lives.value() < MAX_LIVES) {
+            lives.increment();
+        }
     }
 
     /** Decrements the paddles counter by one.

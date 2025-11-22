@@ -45,6 +45,8 @@ public class BrickerGameManager extends GameManager {
     private static final String WIN_MESSAGE = "You win! Play again?";
     private static final String LOSE_MESSAGE = "You lose! Play again?";
     private static final int NUM_NEIGHBORS = 4;
+    private static final Vector2 HEART_VELOCITY = new Vector2(0, 100f);
+    private static final String MAIN_PADDLE = "main paddle";
     private final Vector2 windowDimensions;
     private final int numBricksPerRow;
     private final int numRows;
@@ -191,6 +193,7 @@ public class BrickerGameManager extends GameManager {
                     Paddle.PADDLE_HEIGHT),
                     windowDimensions , paddleImage
                     , inputListener);
+            paddle.setTag(MAIN_PADDLE);
             gameObjects().addGameObject(paddle);
         }
         else {
@@ -214,6 +217,20 @@ public class BrickerGameManager extends GameManager {
                 collisionSound);
         resetBall();
         gameObjects().addGameObject(ball);
+    }
+    /**
+     * Spawns a heart object centered at the specified brick center position.
+     * The heart will move downwards with a predefined velocity.
+     * @param brickCenter the center position of the brick where the heart should be spawned
+     */
+    public void spawnHeart(Vector2 brickCenter){
+        Renderable heartImage = imageReader.readImage(LivesDisplay.HEART_IMAGE, true);
+        float x = brickCenter.x() - LivesDisplay.HEART_SIZE.x()/2f;
+        float y = brickCenter.y() - LivesDisplay.HEART_SIZE.y()/2f;
+        Heart heart = new Heart(new Vector2(x,y), LivesDisplay.HEART_SIZE,
+                heartImage, MAIN_PADDLE, new HeartCollisionStrategy(this));
+        addGameObject(heart, Layer.DEFAULT);
+        heart.setVelocity(HEART_VELOCITY);
     }
     /*
      * Resets the ball's position to the center of the window and assigns it a random initial velocity.
@@ -378,5 +395,13 @@ public class BrickerGameManager extends GameManager {
      */
     public Vector2 getWindowDimensions() {
         return this.windowDimensions;
+    }
+
+    /**
+     * Determines if the player's lives increase by one.
+     */
+    public void increaseLives() {
+        gameState.incrementLivesCounter();
+        livesDisplay.updateLives(gameState.getLivesCounter());
     }
 }

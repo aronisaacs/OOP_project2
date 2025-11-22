@@ -23,8 +23,8 @@ import java.util.function.BiConsumer;
  * @author Aron Isaacs
  */
 public class LivesDisplay extends GameObject {
-    private final static String HEART_IMAGE = "assets/heart.png";
-    private static final Vector2 HEART_SIZE = new Vector2(30, 30);
+    public static final String HEART_IMAGE = "assets/heart.png";
+    public static final Vector2 HEART_SIZE = new Vector2(30, 30);
     private static final Vector2 HEART_START_POS = new Vector2(20, 20);
     private static final float HEART_SPACING = 35f;
     private static final Vector2 NUMBER_DISPLAY_SIZE = new Vector2(50, 30);

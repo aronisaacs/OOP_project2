@@ -38,8 +38,8 @@ public class CollisionStrategyFactory{
                 return new ExtraPaddle(basicStrategy, brickerGameManager);
             case EXPLODING_BRICKS:
                 return new ExplodingBricks(basicStrategy, brickerGameManager);
-//            case EXTRA_LIFE:
-////                return new ExtraLife(new ExtraLife(basicStrategy, brickerGameManager));
+            case EXTRA_LIFE:
+                return new ExtraLife(basicStrategy, brickerGameManager);
 //            case DOUBLE_STRATEGY:
 ////                return new DoubleStrategy(new DoubleStrategy(basicStrategy, brickerGameManager));
             default:
