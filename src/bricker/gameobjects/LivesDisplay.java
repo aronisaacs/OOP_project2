@@ -21,6 +21,9 @@ public class LivesDisplay extends GameObject {
     private static final Vector2 HEART_START_POS = new Vector2(20, 20);
     private static final float HEART_SPACING = 35f;
     private static final Vector2 NUMBER_DISPLAY_SIZE = new Vector2(50, 30);
+    private static final float NUMBER_Y_POSITION_OFFSET = 10;
+    private static final int NUM_GREEN = 3;
+    private static final int NUM_YELLOW = 2;
     private final Renderable heartImage;
     private final TextRenderable textRenderable;
     private final GameObject[] hearts;
@@ -45,7 +48,7 @@ public class LivesDisplay extends GameObject {
         this.hearts = new GameObject[maxLives];
 
         GameObject numberDisplay = new GameObject(
-                new Vector2(HEART_START_POS.x(), HEART_START_POS.y() + HEART_SIZE.y() + 10),
+                new Vector2(HEART_START_POS.x(), HEART_START_POS.y() + HEART_SIZE.y() + NUMBER_Y_POSITION_OFFSET),
                 NUMBER_DISPLAY_SIZE, textRenderable
         );
         brickerGameManager.addGameObject(numberDisplay, Layer.UI);
@@ -62,6 +65,7 @@ public class LivesDisplay extends GameObject {
 
     /**
      * Update display: toggle heart visibility and update text.
+     * @param newLives the new number of lives to display
      */
     public void updateLives(int newLives) {
         for (int i = 0; i < hearts.length; i++) {
@@ -80,8 +84,8 @@ public class LivesDisplay extends GameObject {
      * Determines the color for the numeric display based on the number of lives.
      */
     private Color getColorForLives(int lives) {
-        if (lives >= 3) return Color.GREEN;
-        if (lives == 2) return Color.YELLOW;
+        if (lives >= NUM_GREEN) return Color.GREEN;
+        if (lives == NUM_YELLOW) return Color.YELLOW;
         return Color.RED;
     }
 }

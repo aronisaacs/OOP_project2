@@ -19,6 +19,8 @@ public class GameState {
      * Constructs a GameState with specified initial lives and total bricks.
      * @param initialLives the initial number of lives.
      * @param totalBricks the total number of bricks.
+     * @param totalPaddles the total number of paddles.
+     * @param maxLives the maximum number of lives allowed.
      */
     public GameState(int initialLives, int totalBricks, int totalPaddles, int maxLives) {
         lives = new Counter(initialLives);
@@ -69,27 +71,37 @@ public class GameState {
     /** gets the current number of lives.
      * @return the current number of lives.
      */
-    public int getLivesCounter() { return lives.value(); }
+    public int getLivesCounter() {
+        return lives.value();
+    }
 
     /** gets the current number of Paddles.
      * @return the current number of paddles.
      */
-    public int getPaddlesCounter() {return paddles.value();}
+    public int getPaddlesCounter() {
+        return paddles.value();
+    }
 
     /** gets the current number of hits on the sub-paddle.
      * @return the current number of hits on the sub-paddle.
      */
-    public int getSubPaddleHitsCounter() {return subPaddleHits.value();}
+    public int getSubPaddleHitsCounter() {
+        return subPaddleHits.value();
+    }
 
     /** decides if the game is won.
      * @return true if all bricks are destroyed, false otherwise.
      */
-    public boolean isVictory() { return bricks.value() == 0;}
+    public boolean isVictory() {
+        return bricks.value() == 0;
+    }
 
     /** decides if the game is over.
      * @return true if no lives remain, false otherwise.
      */
-    public boolean isGameOver() { return lives.value() <= 0; }
+    public boolean isGameOver() {
+        return lives.value() <= 0;
+    }
 }
 
 

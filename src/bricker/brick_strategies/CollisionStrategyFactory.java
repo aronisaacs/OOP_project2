@@ -11,7 +11,7 @@ import bricker.main.BrickerGameManager;
  */
 public class CollisionStrategyFactory {
     private static final int DOUBLE_STRAT_COUNT = 2;
-    private static final Random random = new Random();
+    private static final Random RANDOM = new Random();
     private static final int NUM_STRATEGIES = 5;
     private static final int EXTRA_PUCK = 0;
     private static final int EXTRA_PADDLE = 1;
@@ -30,11 +30,13 @@ public class CollisionStrategyFactory {
 
     /**
      * Builds and returns a basic collision strategy
+     * @param basic the basic collision strategy to decorate
+     * @param brickerGameManager the game manager to handle brick removal
      * @return a CollisionStrategy instance.
      */
     public CollisionStrategy buildCollisionStrategy(CollisionStrategy basic,
                                                     BrickerGameManager brickerGameManager) {
-        int r = random.nextInt(2 * NUM_STRATEGIES);
+        int r = RANDOM.nextInt(2 * NUM_STRATEGIES);
         //1/2 chance to return basic strategy. r belongs to [5-9]
         if (r >= NUM_STRATEGIES) {
             return basic;
@@ -58,14 +60,14 @@ public class CollisionStrategyFactory {
             if (strategyCount[0] >= MAX_STRATEGIES){
                 break;
             }
-            int r = random.nextInt(NUM_STRATEGIES);
+            int r = RANDOM.nextInt(NUM_STRATEGIES);
             if(r == DOUBLE_STRATEGY){
                 //is there room for two more strategies
                 if(strategyCount[0] <= MAX_STRATEGIES - DOUBLE_STRAT_COUNT && depth < MAX_DEPTH){
                     basic = buildDouble(basic, brickerGameManager, strategyCount, depth + 1);
                 } else {
                     //choose another non double strategy
-                    r = random.nextInt(NUM_STRATEGIES - 1);
+                    r = RANDOM.nextInt(NUM_STRATEGIES - 1);
                     basic = buildSingle(r, basic, brickerGameManager);
                     strategyCount[0]++;
                 }
@@ -77,20 +79,17 @@ public class CollisionStrategyFactory {
         return basic;
     }
 
+    /* builds a single strategy based on the random number provided */
     private CollisionStrategy buildSingle(int r, CollisionStrategy currentStrategy,
                                           BrickerGameManager brickerGameManager) {
-        switch (r) {
-            case EXTRA_PUCK:
-                return new ExtraPuckCollisionStrategy(currentStrategy, brickerGameManager);
-            case EXTRA_PADDLE:
-                return new ExtraPaddleCollisionStrategy(currentStrategy, brickerGameManager);
-            case EXPLODING_BRICKS:
-                return new ExplodingBricksCollisionStrategy(currentStrategy, brickerGameManager);
-            case EXTRA_LIFE:
-                return new ExtraLifeCollisionStrategy(currentStrategy, brickerGameManager);
+        return switch (r) {
+            case EXTRA_PUCK -> new ExtraPuckCollisionStrategy(currentStrategy, brickerGameManager);
+            case EXTRA_PADDLE -> new ExtraPaddleCollisionStrategy(currentStrategy, brickerGameManager);
+            case EXPLODING_BRICKS ->
+                    new ExplodingBricksCollisionStrategy(currentStrategy, brickerGameManager);
+            case EXTRA_LIFE -> new ExtraLifeCollisionStrategy(currentStrategy, brickerGameManager);
             //should never reach here because the random bounds between puck and life
-            default:
-                return currentStrategy;
-        }
+            default -> currentStrategy;
+        };
     }
 }

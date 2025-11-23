@@ -27,6 +27,8 @@ public class Brick extends GameObject {
      * @param dimensions the dimensions (width and height) of the brick.
      * @param renderable the visual representation of the brick.
      * @param collisionStrategy the strategy to execute upon collision.
+     * @param row the row of the brick in the grid
+     * @param col the column of the brick in the grid
      */
     public Brick(int row, int col, Vector2 topLeftCorner, Vector2 dimensions,
                  Renderable renderable, CollisionStrategy collisionStrategy) {

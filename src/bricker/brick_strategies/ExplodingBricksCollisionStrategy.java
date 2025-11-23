@@ -18,7 +18,8 @@ public class ExplodingBricksCollisionStrategy extends CollisionStrategyDecorator
      * @param decorated          The CollisionStrategy to be decorated.
      * @param brickerGameManager The game manager to handle brick removal.
      */
-    public ExplodingBricksCollisionStrategy(CollisionStrategy decorated, BrickerGameManager brickerGameManager) {
+    public ExplodingBricksCollisionStrategy(CollisionStrategy decorated,
+                                            BrickerGameManager brickerGameManager) {
         super(decorated);
         this.brickerGameManager = brickerGameManager;
 

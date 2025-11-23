@@ -62,7 +62,7 @@ public class BrickerGameManager extends GameManager {
     private static final float PADDLE_HEIGHT = 15f;
     private static final float PADDLE_WIDTH = 100f;
     private static final float PADDLE_OFFSET_FROM_BOTTOM = 100f;
-    private final int SUB_PADDLES_MAX_HITS = 4;
+    private static final int SUB_PADDLES_MAX_HITS = 4;
     private static final int INITIAL_PADDLES = 0;
     /*Ball Brick Heart constants*/
     private static final float BALL_SIZE = 50f;
@@ -73,6 +73,7 @@ public class BrickerGameManager extends GameManager {
     private static final int DEFAULT_NUM_ROWS = 6;
     private static final float BRICK_HEIGHT = 15f;
     private static final int NUM_NEIGHBORS = 4;
+    private static final float HALF = 0.5f;
     private final int numRows;
     private final int numBricksPerRow;
     private static final Vector2 HEART_SIZE = new Vector2(30, 30);
@@ -241,8 +242,7 @@ public class BrickerGameManager extends GameManager {
                     , inputListener);
             paddle.setTag(MAIN_PADDLE_TAG);
             gameObjects().addGameObject(paddle);
-        }
-        else {
+        } else {
             GameObject subPaddle = new SubPaddle(initialPosition, new Vector2(PADDLE_WIDTH,
                     PADDLE_HEIGHT),
                     windowDimensions , paddleImage
@@ -313,7 +313,7 @@ public class BrickerGameManager extends GameManager {
      * The ball will start moving in a random direction when reset.
      */
     private void resetBall() {
-        ball.setCenter(windowDimensions.mult(0.5f));
+        ball.setCenter(windowDimensions.mult(HALF));
         Random random = new Random();
         float ballSpeedX = BALL_SPEED * (random.nextBoolean() ? 1 : -1);
         float ballSpeedY = BALL_SPEED * (random.nextBoolean() ? 1 : -1);

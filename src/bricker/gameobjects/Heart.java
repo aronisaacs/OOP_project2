@@ -25,6 +25,7 @@ public class Heart extends GameObject {
      * @param renderable the visual representation of the heart.
      * @param mainPaddleTag the tag of the main paddle to detect collisions with.
      * @param collisionStrategy the strategy to execute upon collision.
+     * @param HEART_TAG the tag to assign to this Heart object.
      */
     public Heart(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable, String mainPaddleTag,
                  CollisionStrategy collisionStrategy, String HEART_TAG) {

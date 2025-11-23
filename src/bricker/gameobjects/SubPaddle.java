@@ -9,7 +9,7 @@ import bricker.main.BrickerGameManager;
  */
 public class SubPaddle extends Paddle{
     private final BrickerGameManager brickerGameManager;
-    private final String BORDER_TAG;
+    private final String borderTag;
 
     /**
      * Constructor for the SubPaddle.
@@ -25,10 +25,10 @@ public class SubPaddle extends Paddle{
     public SubPaddle(danogl.util.Vector2 topLeftCorner, danogl.util.Vector2 paddleDimensions,
                        danogl.util.Vector2 windowDimensions, danogl.gui.rendering.Renderable renderable,
                        danogl.gui.UserInputListener inputListener, BrickerGameManager brickerGameManager,
-                     String BORDER_TAG) {
+                     String borderTag) {
         super(topLeftCorner, paddleDimensions, windowDimensions, renderable, inputListener);
         this.brickerGameManager = brickerGameManager;
-        this.BORDER_TAG = BORDER_TAG;
+        this.borderTag = borderTag;
     }
 
     /**
@@ -39,7 +39,7 @@ public class SubPaddle extends Paddle{
      */
     @Override
     public boolean shouldCollideWith(danogl.GameObject other){
-        return !other.getTag().equals(BORDER_TAG);
+        return !other.getTag().equals(borderTag);
     }
     /**
      * Handles collision events by notifying the game manager when the sub-paddle is hit.
