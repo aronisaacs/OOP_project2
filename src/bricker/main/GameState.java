@@ -1,4 +1,4 @@
-package bricker.gameobjects;
+package bricker.main;
 
 import danogl.util.Counter;
 

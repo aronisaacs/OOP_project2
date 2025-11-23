@@ -43,6 +43,8 @@ public class BrickerGameManager extends GameManager {
     private static final String HEART_TAG = "heart";
     private static final String BORDER_TAG = "border";
     private static final String MAIN_PADDLE_TAG = "main paddle";
+    private static final String EXPLODED_TAG = "exploded";
+    private static final String BRICK_TAG = "brick";
     /*Paths to relevant files */
     private static final String PADDLE_IMAGE_PATH = "assets/paddle.png";
     private static final String HEART_IMAGE_PATH = "assets/heart.png";
@@ -83,7 +85,6 @@ public class BrickerGameManager extends GameManager {
     private final Vector2 windowDimensions;
     private final Random random = new Random();
     private SoundReader soundReader;
-    private Sound explodeSound;
     private UserInputListener inputListener;
     private ImageReader imageReader;
     private WindowController windowController;
@@ -138,7 +139,6 @@ public class BrickerGameManager extends GameManager {
         this.inputListener = inputListener;
         this.imageReader = imageReader;
         this.soundReader = soundReader;
-        this.explodeSound = soundReader.readSound(EXPLODE_SOUND_PATH);
         makeGameObjects();
     }
 
@@ -154,7 +154,7 @@ public class BrickerGameManager extends GameManager {
         makeBall();
         makePaddle(windowDimensions.y() - PADDLE_OFFSET_FROM_BOTTOM);
         makeBricks();
-        livesDisplay = new LivesDisplay(imageReader, this::addGameObject, INITIAL_LIVES,
+        livesDisplay = new LivesDisplay(imageReader, this, INITIAL_LIVES,
                 MAX_LIVES, HEART_IMAGE_PATH, HEART_SIZE);
     }
 
@@ -171,10 +171,10 @@ public class BrickerGameManager extends GameManager {
         // Use a basic collision strategy for bricks. main part to be changed for the final part of the
         // assignment!!
         CollisionStrategyFactory collisionStrategyFactory = new CollisionStrategyFactory();
+        CollisionStrategy basicStrategy = new BasicCollisionStrategy(this);
         // Create bricks in a grid layout
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numBricksPerRow; col++) {
-                CollisionStrategy basicStrategy = new BasicCollisionStrategy(this);
                 makeBrick(collisionStrategyFactory.buildCollisionStrategy(basicStrategy,
                         this), col, brickWidth,  row,  brickImage);
             }
@@ -197,6 +197,7 @@ public class BrickerGameManager extends GameManager {
         GameObject brick = new Brick(row, col, new Vector2(x, y), new Vector2(brickWidth, BRICK_HEIGHT),
                 brickImage, collisionStrategy);
         gameObjects().addGameObject(brick, Layer.STATIC_OBJECTS);
+        brick.setTag(BRICK_TAG);
     }
 
     /*
@@ -384,6 +385,11 @@ public class BrickerGameManager extends GameManager {
      * @param ball the ball that hit the brick
      */
     public void explodeBricks(GameObject brick, GameObject ball){
+        if(brick.getTag().equals(EXPLODED_TAG)) {
+            return;
+        }
+        brick.setTag(EXPLODED_TAG);
+        Sound explodeSound = soundReader.readSound(EXPLODE_SOUND_PATH);
         explodeSound.play();
         int i = ((Brick) brick).getRow();
         int j = ((Brick) brick).getCol();
@@ -391,7 +397,8 @@ public class BrickerGameManager extends GameManager {
         int index = 0;
         //find neighbors and store them in an array
         for(GameObject go : gameObjects().objectsInLayer(Layer.STATIC_OBJECTS)){
-            if(go instanceof Brick nextBrick){
+            if(go.getTag().equals(BRICK_TAG) ||  go.getTag().equals(EXPLODED_TAG)){
+                Brick nextBrick = (Brick) go;
                 //left and right neighbors
                 if(nextBrick.getCol() == j && Math.abs(nextBrick.getRow() - i) == 1){
                     neighbors[index] = nextBrick;

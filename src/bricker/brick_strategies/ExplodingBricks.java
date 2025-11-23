@@ -9,7 +9,6 @@ import bricker.main.BrickerGameManager;
  * @author Ron Stein
  */
 public class ExplodingBricks extends CollisionStrategyDecorator {
-    private static final String EXPLODED_TAG = "exploded";
     private final BrickerGameManager brickerGameManager;
 
     /**
@@ -20,6 +19,7 @@ public class ExplodingBricks extends CollisionStrategyDecorator {
     public ExplodingBricks(CollisionStrategy decorated, BrickerGameManager brickerGameManager) {
         super(decorated);
         this.brickerGameManager = brickerGameManager;
+
     }
 
     /**
@@ -31,10 +31,6 @@ public class ExplodingBricks extends CollisionStrategyDecorator {
     @Override
     public void onCollision(danogl.GameObject thisObj, danogl.GameObject otherObj) {
         super.onCollision(thisObj, otherObj);
-        if(thisObj.getTag().equals(EXPLODED_TAG)) {
-            return;
-        }
-        thisObj.setTag(EXPLODED_TAG);
         brickerGameManager.explodeBricks(thisObj, otherObj);
     }
 }

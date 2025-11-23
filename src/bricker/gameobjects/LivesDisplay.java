@@ -1,6 +1,7 @@
 
 package bricker.gameobjects;
 
+import bricker.main.BrickerGameManager;
 import danogl.GameObject;
 import danogl.collisions.Layer;
 import danogl.gui.ImageReader;
@@ -28,14 +29,18 @@ public class LivesDisplay extends GameObject {
     private static final Vector2 NUMBER_DISPLAY_SIZE = new Vector2(50, 30);
     private final Renderable heartImage;
     private final TextRenderable textRenderable;
-    private final List<GameObject> hearts = new ArrayList<>();
+    private final GameObject[] hearts;
 
     /**
      * Constructs a LivesDisplay with the specified initial lives, image reader, and game manager.
-     * @param imageReader the ImageReader to load the heart image.
-     * @param addObject a BiConsumer to add game objects to the game (used to add hearts and text).
+     * @param imageReader the ImageReader to load the heart image
+     * @param brickerGameManager the game manager to interact with
+     * @param initialLives the initial number of lives to display
+     * @param maxLives the maximum number of lives (hearts) to display
+     * @param HEART_IMAGE_PATH the file path to the heart image
+     * @param HEART_SIZE the size of each heart icon
      */
-    public LivesDisplay(ImageReader imageReader, BiConsumer<GameObject,Integer> addObject,
+    public LivesDisplay(ImageReader imageReader, BrickerGameManager brickerGameManager,
                         int initialLives, int maxLives, String HEART_IMAGE_PATH, Vector2 HEART_SIZE) {
         super(Vector2.ZERO, Vector2.ZERO, null);
 
@@ -43,19 +48,20 @@ public class LivesDisplay extends GameObject {
         heartImage = imageReader.readImage(HEART_IMAGE_PATH, true);
         textRenderable = new TextRenderable(String.valueOf(initialLives));
         textRenderable.setColor(getColorForLives(initialLives));
+        this.hearts = new GameObject[maxLives];
 
         GameObject numberDisplay = new GameObject(
                 new Vector2(HEART_START_POS.x(), HEART_START_POS.y() + HEART_SIZE.y() + 10),
                 NUMBER_DISPLAY_SIZE, textRenderable
         );
-        addObject.accept(numberDisplay, Layer.UI);
+        brickerGameManager.addGameObject(numberDisplay, Layer.UI);
 
         // Create hearts (all added once)
         for (int i = 0; i < maxLives; i++) {
             Vector2 pos = HEART_START_POS.add(new Vector2(i * HEART_SPACING, 0));
             GameObject heart = new GameObject(pos, HEART_SIZE, null);
-            hearts.add(heart);
-            addObject.accept(heart, Layer.UI);
+            hearts[i] = heart;
+            brickerGameManager.addGameObject(heart, Layer.UI);
         }
         updateLives(initialLives);
     }
@@ -64,11 +70,11 @@ public class LivesDisplay extends GameObject {
      * Update display: toggle heart visibility and update text.
      */
     public void updateLives(int newLives) {
-        for (int i = 0; i < hearts.size(); i++) {
+        for (int i = 0; i < hearts.length; i++) {
             if (i < newLives) {
-                hearts.get(i).renderer().setRenderable(heartImage); // show
+                hearts[i].renderer().setRenderable(heartImage); // show
             } else {
-                hearts.get(i).renderer().setRenderable(null);       // hide
+                hearts[i].renderer().setRenderable(null);       // hide
             }
         }
 
