@@ -1,6 +1,8 @@
 package bricker.brick_strategies;
 
 import bricker.main.BrickerGameManager;
+import danogl.GameObject;
+
 /**
  * A collision strategy that causes this brick and surrounding bricks to explode.
  * When a collision is detected, the brick and its neighboring bricks are removed from the game.
@@ -8,7 +10,7 @@ import bricker.main.BrickerGameManager;
  * @see CollisionStrategyDecorator
  * @author Ron Stein
  */
-public class ExplodingBricks extends CollisionStrategyDecorator {
+public class ExplodingBricksCollisionStrategy extends CollisionStrategyDecorator {
     private final BrickerGameManager brickerGameManager;
 
     /**
@@ -16,7 +18,7 @@ public class ExplodingBricks extends CollisionStrategyDecorator {
      * @param decorated          The CollisionStrategy to be decorated.
      * @param brickerGameManager The game manager to handle brick removal.
      */
-    public ExplodingBricks(CollisionStrategy decorated, BrickerGameManager brickerGameManager) {
+    public ExplodingBricksCollisionStrategy(CollisionStrategy decorated, BrickerGameManager brickerGameManager) {
         super(decorated);
         this.brickerGameManager = brickerGameManager;
 
@@ -29,7 +31,7 @@ public class ExplodingBricks extends CollisionStrategyDecorator {
      * @param otherObj the other game object involved in the collision
      */
     @Override
-    public void onCollision(danogl.GameObject thisObj, danogl.GameObject otherObj) {
+    public void onCollision(GameObject thisObj, GameObject otherObj) {
         super.onCollision(thisObj, otherObj);
         brickerGameManager.explodeBricks(thisObj, otherObj);
     }

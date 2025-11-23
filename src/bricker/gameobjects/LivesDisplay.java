@@ -1,4 +1,3 @@
-
 package bricker.gameobjects;
 
 import bricker.main.BrickerGameManager;
@@ -8,12 +7,7 @@ import danogl.gui.ImageReader;
 import danogl.gui.rendering.TextRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiConsumer;
-
 
 /**
  * Displays the player's remaining lives using heart icons and a numeric display.

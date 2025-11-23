@@ -389,10 +389,11 @@ public class BrickerGameManager extends GameManager {
             return;
         }
         brick.setTag(EXPLODED_TAG);
+        Brick myBrick = (Brick) brick;
         Sound explodeSound = soundReader.readSound(EXPLODE_SOUND_PATH);
         explodeSound.play();
-        int i = ((Brick) brick).getRow();
-        int j = ((Brick) brick).getCol();
+        int i = myBrick.getRow();
+        int j = myBrick.getCol();
         Brick[] neighbors = new Brick[NUM_NEIGHBORS];
         int index = 0;
         //find neighbors and store them in an array

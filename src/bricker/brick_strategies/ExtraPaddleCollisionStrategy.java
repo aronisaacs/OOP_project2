@@ -7,7 +7,7 @@ import bricker.main.BrickerGameManager;
  * when a brick is hit.
  * @author Ron Stein
  */
-public class ExtraPaddle extends CollisionStrategyDecorator {
+public class ExtraPaddleCollisionStrategy extends CollisionStrategyDecorator {
     private final BrickerGameManager brickerGameManager;
 
     /**
@@ -15,7 +15,7 @@ public class ExtraPaddle extends CollisionStrategyDecorator {
      * @param decorated         The CollisionStrategy to be decorated.
      * @param brickerGameManager The game manager to handle brick removal.
      */
-    public ExtraPaddle(CollisionStrategy decorated, BrickerGameManager brickerGameManager) {
+    public ExtraPaddleCollisionStrategy(CollisionStrategy decorated, BrickerGameManager brickerGameManager) {
         super(decorated);
         this.brickerGameManager = brickerGameManager;
     }

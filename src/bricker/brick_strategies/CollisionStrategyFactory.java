@@ -81,13 +81,13 @@ public class CollisionStrategyFactory {
                                           BrickerGameManager brickerGameManager) {
         switch (r) {
             case EXTRA_PUCK:
-                return new ExtraPuck(currentStrategy, brickerGameManager);
+                return new ExtraPuckCollisionStrategy(currentStrategy, brickerGameManager);
             case EXTRA_PADDLE:
-                return new ExtraPaddle(currentStrategy, brickerGameManager);
+                return new ExtraPaddleCollisionStrategy(currentStrategy, brickerGameManager);
             case EXPLODING_BRICKS:
-                return new ExplodingBricks(currentStrategy, brickerGameManager);
+                return new ExplodingBricksCollisionStrategy(currentStrategy, brickerGameManager);
             case EXTRA_LIFE:
-                return new ExtraLife(currentStrategy, brickerGameManager);
+                return new ExtraLifeCollisionStrategy(currentStrategy, brickerGameManager);
             //should never reach here because the random bounds between puck and life
             default:
                 return currentStrategy;
