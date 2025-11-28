@@ -3,20 +3,27 @@ ron.stein, aronisaacs
 
 Question 1: What design pattern did we use in section 1.7 in order to allow Bricks to disappear from
 the game? What are the advantages and disadvantages of using this pattern?
-All instances of Brick are added to the GameObjectCollection container they are created. Therefore, in order
-to remove hit bricks from the game the BasicCollisionStrategy class (which all bricks have)
-calls the removeGameObject method that belongs to GameObjectCollection, but it is overloaded in the
-GameManager class. The overloaded method removes the brick from the container. Advantages of this pattern
-are that it implements the DanoGameLab container functionality, and it allows for easy removal of
-GameObjects. A disadvantage is that it couples the Brick class to the GameObjectCollection class.
+All instances of Brick are added to the GameObjectCollection container they are created. each brick composes a
+ collision strategy that ultimately calls the basicCollisionStrategy, which composes in it the game manager,
+ which has a function to remove game objects from the GameObjectCollection. When a brick collides with the
+ ball, the overridden method onCollision in the Brick class is called, which in turn calls
+ the onCollision method of its collision strategy, which eventually calls the removeGameObject method
+ in the GameManager, passing itself as the object to be removed from the GameObjectCollection.
+The advantage of this design pattern is that the brick itself needs no knowledge of the GameObjectCollection,
+or even what its collision strategy it is, which adheres to the single responsibility principle.
+A disadvantage is that the game manager needs to be passed around to many different classes in order for them to be able
+to remove game objects from the collection, which can lead to dependencies between classes.
 
 Question 2: Explain how we implemented the Life Display in section 1.8. Explain what each class involved
 does in order to implement this functionality.
-We chose to make a LivesDisplay class that extends the GameObject class. The LivesDisplay class is
-responsible for showing or hiding the remaining lives and the number of lives left. In addition, we added
-a GameState class that is responsible for counting and incrementing/decrementing the number of lives,
-paddles, number of hits on the subpaddle, bricks, victory, game over. Essentially, all the dynamic counting
-and checks that need to happen throughout the game are done in the GameState class.
+We chose to make a LivesDisplay class that is
+responsible for showing or hiding the remaining lives and the number of lives left. It composes inside of it
+four hearts, which are themselves GameObjects that are added to the GameObjectCollection, as well as a digit
+display gameObject. The Hearts are simply images that are shown or hidden based on the number of lives
+remaining. The digit display is a game object that shows the number of lives left as a digit. The LivesDisplay class
+has methods to increment and decrement the number of lives, as well as to update the display accordingly.
+the LifesDisplay class doesnt even keep track of the game state: it is simply told when to update the live
+count when neccesary, which adheres to the single responsibility principle.
 
 Question 3: Explain briefly how we implemented each collision strategy behavior. What classes were
 involved and what did they do?
@@ -33,7 +40,7 @@ that allows us to identify it as an extra paddle. We created a SubPaddle class t
 to differentiate between the main paddle and the extra paddle.
 For the exploding bricks behavior 2.2.3, we created the ExplodingBrick concrete decorator class. Similar
 to the ExtraPaddle class, it calls a method in the GameManager that is responsible for exploding the
-surrounding bricks. An exploded brick is tagged exploded in order to avoid infinnite chain reactions
+surrounding bricks. An exploded brick is tagged exploded in order to avoid infinite chain reactions
 between neighboring exploding bricks. The explodeBricks method in GameManager iterates through the
 GameObjectCollection to find the neighboring bricks and triggers their onCollision method.
 For the returning life behavior 2.2.4, we created a Heart class that extends the GameObject class.
@@ -45,7 +52,7 @@ Question 4: Explain how we implemented the double strategy behavior in 2.2.5, an
 strategies to 3 per brick.
 All of the logic for the double strategy behavior is implemented in the CollisionStrategyFactory class.
 When a brick is created, if randomly by 1/10 chance it is decided that the brick will have a double strategy,
-then a seperate method that handles double strategies is called. It recursively randomly chooses more random
+then a separate method that handles double strategies is called. It recursively randomly chooses more random
 strategies and decorates the brick with them one at a time. A MAX_STRATEGIES constant is defined in order
 to prevent more than 3 strategies, and a MAX_DEPTH constant is defined in order to prevent the double
 strategy to be chosen randomly an infinite amount of times. MAX_STRATEGIES can be changed to allow

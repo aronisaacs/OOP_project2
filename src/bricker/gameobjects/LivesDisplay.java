@@ -19,7 +19,7 @@ import java.awt.Color;
  * @author Aron Isaacs
  * @see danogl.GameObject
  */
-public class LivesDisplay extends GameObject {
+public class LivesDisplay  {
 	private static final Vector2 HEART_START_POS = new Vector2(20, 20);
 	private static final float HEART_SPACING = 35f;
 	private static final Vector2 NUMBER_DISPLAY_SIZE = new Vector2(50, 30);
@@ -42,7 +42,6 @@ public class LivesDisplay extends GameObject {
 	 */
 	public LivesDisplay(ImageReader imageReader, BrickerGameManager brickerGameManager,
 						int initialLives, int maxLives, String HEART_IMAGE_PATH, Vector2 HEART_SIZE) {
-		super(Vector2.ZERO, Vector2.ZERO, null);
 
 		// Load assets
 		heartImage = imageReader.readImage(HEART_IMAGE_PATH, true);
