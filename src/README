@@ -3,7 +3,8 @@ ron.stein, aronisaacs
 
 Question 1: What design pattern did we use in section 1.7 in order to allow Bricks to disappear from
 the game? What are the advantages and disadvantages of using this pattern?
-All instances of Brick are added to the GameObjectCollection container they are created. each brick composes a
+All instances of Brick are added to the GameObjectCollection container they are created. each
+brick composes a
  collision strategy that ultimately calls the basicCollisionStrategy, which composes in it the game manager,
  which has a function to remove game objects from the GameObjectCollection. When a brick collides with the
  ball, the overridden method onCollision in the Brick class is called, which in turn calls
@@ -11,7 +12,8 @@ All instances of Brick are added to the GameObjectCollection container they are 
  in the GameManager, passing itself as the object to be removed from the GameObjectCollection.
 The advantage of this design pattern is that the brick itself needs no knowledge of the GameObjectCollection,
 or even what its collision strategy it is, which adheres to the single responsibility principle.
-A disadvantage is that the game manager needs to be passed around to many different classes in order for them to be able
+A disadvantage is that the game manager needs to be passed around to many different classes in order for
+them to be able
 to remove game objects from the collection, which can lead to dependencies between classes.
 
 Question 2: Explain how we implemented the Life Display in section 1.8. Explain what each class involved
@@ -20,7 +22,8 @@ We chose to make a LivesDisplay class that is
 responsible for showing or hiding the remaining lives and the number of lives left. It composes inside of it
 four hearts, which are themselves GameObjects that are added to the GameObjectCollection, as well as a digit
 display gameObject. The Hearts are simply images that are shown or hidden based on the number of lives
-remaining. The digit display is a game object that shows the number of lives left as a digit. The LivesDisplay class
+remaining. The digit display is a game object that shows the number of lives left as a digit.
+The LivesDisplay class
 has methods to increment and decrement the number of lives, as well as to update the display accordingly.
 the LifesDisplay class doesnt even keep track of the game state: it is simply told when to update the live
 count when neccesary, which adheres to the single responsibility principle.
