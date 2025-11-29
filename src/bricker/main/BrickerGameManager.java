@@ -452,7 +452,6 @@ public class BrickerGameManager extends GameManager {
 		// Check ball falling below screen
 		if (ball.getCenter().y() > windowDimensions.y()) {
 			gameState.decrementLivesCounter();
-			//todo decide if this is the design we want
 			livesDisplay.updateLives(gameState.getLivesCounter()); // Update display
 			// Check for game over
 			if (!gameState.isGameOver()) {
