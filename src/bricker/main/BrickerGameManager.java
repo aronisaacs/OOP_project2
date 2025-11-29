@@ -63,7 +63,7 @@ public class BrickerGameManager extends GameManager {
 	private static final float PADDLE_HEIGHT = 15f;
 	private static final float PADDLE_WIDTH = 100f;
 	private static final float PADDLE_OFFSET_FROM_BOTTOM = 100f;
-	private static final int SUB_PADDLES_MAX_HITS = 4;
+	private static final int SUB_PADDLES_MAX_HITS = 3; //this is 4 total hits, 0 to 3 including
 	private static final int INITIAL_PADDLES = 0;
 	/*Ball Brick Heart constants*/
 	private static final float BALL_SIZE = 50f;
